@@ -4,15 +4,19 @@ import SiteNav from '../../components/nav/SiteNav.astro';
 import FieldLines from '../../components/interactive/FieldLines.tsx';
 import EMWaveApp from '../../components/interactive/EMWaveApp.tsx';
 import QuizApp from '../../components/interactive/QuizApp.tsx';
+import PosterDownload from '../../components/interactive/PosterDownload.tsx';
 import {
   RESOURCES_INTRO,
   VIDEOS,
   BOOKS,
   PAPERS,
   EXPERIMENTS,
-  DOWNLOADS,
 } from '../../data/resources';
+import { ERAS } from '../../data/timeline';
+import { getAllScientists } from '../../lib/data';
 import { webPageSchema, breadcrumbSchema } from '../../lib/schema';
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
 
 const origin = Astro.site;
 const abs = (p: string): string => (origin ? new URL(p, origin).href : p);
@@ -28,6 +32,12 @@ const jsonLd = [
     { name: '资源中心', url: pageUrl },
   ]),
 ];
+
+// 预渲染海报中的 KaTeX 公式(构建时,零运行时开销)
+const eq = (tex: string) => katex.renderToString(tex, { displayMode: true, throwOnError: false });
+
+// 科学家海报数据
+const scientistEntries = await getAllScientists();
 ---
 
 <BaseLayout
@@ -232,19 +242,126 @@ const jsonLd = [
     <!-- ===== 高清素材下载 ===== -->
     <section id="downloads" class="mt-14 scroll-mt-24" aria-labelledby="dl-title">
       <h2 id="dl-title" class="text-2xl font-bold">高清素材下载</h2>
-      <div class="mt-5 grid gap-4 sm:grid-cols-3">
-        {
-          DOWNLOADS.map((d) => (
-            <article class="rounded-xl border border-line bg-panel p-5">
-              <h3 class="font-bold text-text">{d.title}</h3>
-              <p class="mt-2 text-sm leading-7 text-text-dim">{d.desc}</p>
-              <div class="mt-3 flex items-center justify-between">
-                <span class="text-[11px] text-text-dim">{d.format}</span>
-                <span class="rounded-full bg-panel-2 px-2 py-0.5 text-[11px] text-text-dim">即将上线</span>
+
+      <!-- 1. 麦克斯韦方程组海报 -->
+      <div class="mt-6 rounded-2xl border border-line bg-panel/40 p-5 md:p-6">
+        <h3 class="text-lg font-bold">麦克斯韦方程组海报</h3>
+        <p class="mt-1 text-sm text-text-dim">四个方程的微分形式,配公式来源注释,适合打印张贴。</p>
+        <div class="mt-5">
+          <PosterDownload fileName="麦克斯韦方程组-电磁学认知革命.png" client:visible>
+            <div style="padding:48px 40px;font-family:Inter,system-ui,sans-serif;min-height:520px">
+              <div style="text-align:center;margin-bottom:36px">
+                <h1 style="font-size:28px;font-weight:800;color:#F59E0B;margin:0 0 4px">麦克斯韦方程组</h1>
+                <p style="font-size:15px;color:#94A3B8;margin:0">
+                  四个方程统一电、磁、光 &nbsp;·&nbsp; James Clerk Maxwell, 1865
+                </p>
               </div>
-            </article>
-          ))
-        }
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:720px;margin:0 auto">
+                <div style="background:#16223f;border-radius:12px;padding:20px 18px;border-left:3px solid #3B82F6">
+                  <div style="font-size:11px;font-weight:700;color:#3B82F6;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">高斯电场定律 · 收编库仑定律</div>
+                  <span set:html={eq('\\nabla \\cdot \\mathbf{E} = \\dfrac{\\rho}{\\varepsilon_0}')} />
+                  <p style="font-size:12px;color:#94A3B8;margin:10px 0 0">电荷是电场的源,电场从正电荷发散。</p>
+                </div>
+                <div style="background:#16223f;border-radius:12px;padding:20px 18px;border-left:3px solid #64748B">
+                  <div style="font-size:11px;font-weight:700;color:#64748B;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">高斯磁场定律 · 磁单极不存在</div>
+                  <span set:html={eq('\\nabla \\cdot \\mathbf{B} = 0')} />
+                  <p style="font-size:12px;color:#94A3B8;margin:10px 0 0">磁感线无头无尾、自成闭合。</p>
+                </div>
+                <div style="background:#16223f;border-radius:12px;padding:20px 18px;border-left:3px solid #EF4444">
+                  <div style="font-size:11px;font-weight:700;color:#EF4444;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">法拉第电磁感应 · 十年实验</div>
+                  <span set:html={eq('\\nabla \\times \\mathbf{E} = -\\dfrac{\\partial \\mathbf{B}}{\\partial t}')} />
+                  <p style="font-size:12px;color:#94A3B8;margin:10px 0 0">变化的磁场,激发出电场。</p>
+                </div>
+                <div style="background:#16223f;border-radius:12px;padding:20px 18px;border-left:3px solid #A78BFA">
+                  <div style="font-size:11px;font-weight:700;color:#A78BFA;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">安培–麦克斯韦 · 位移电流</div>
+                  <span set:html={eq('\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\varepsilon_0 \\dfrac{\\partial \\mathbf{E}}{\\partial t}')} />
+                  <p style="font-size:12px;color:#94A3B8;margin:10px 0 0">电流与变化的电场,都会激发磁场——末项预言了电磁波。</p>
+                </div>
+              </div>
+              <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #1e2c4a">
+                <p style="font-size:12px;color:#64748B;margin:0">
+                  电磁学认知革命 · moss-550-w.github.io/Electromagnetic
+                </p>
+              </div>
+            </div>
+          </PosterDownload>
+        </div>
+      </div>
+
+      <!-- 2. 时间线海报 -->
+      <div class="mt-6 rounded-2xl border border-line bg-panel/40 p-5 md:p-6">
+        <h3 class="text-lg font-bold">电磁学发展时间线海报</h3>
+        <p class="mt-1 text-sm text-text-dim">关键节点一览,从泰勒斯到 5G,适合打印张贴。</p>
+        <div class="mt-5">
+          <PosterDownload fileName="电磁学发展时间线-电磁学认知革命.png" client:visible>
+            <div style="padding:44px 40px;font-family:Inter,system-ui,sans-serif;min-height:580px">
+              <div style="text-align:center;margin-bottom:32px">
+                <h1 style="font-size:26px;font-weight:800;color:#F59E0B;margin:0 0 4px">电磁学发展时间线</h1>
+                <p style="font-size:14px;color:#94A3B8;margin:0">
+                  从琥珀摩擦到 5G 通信 · 一场跨越三千年的认知革命
+                </p>
+              </div>
+              <div style="max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:0">
+                {ERAS.flatMap((era) =>
+                  era.nodes.filter(n => n.key).map((n) => (
+                    <div style="display:flex;align-items:flex-start;gap:16px;padding:12px 0;border-bottom:1px solid #1e2c4a">
+                      <div style="min-width:52px;text-align:right;font-size:13px;font-weight:700;color:#F59E0B;font-variant-numeric:tabular-nums">{n.year}</div>
+                      <div style="width:2px;min-height:40px;background:{era.accent};border-radius:1px;margin-top:2px"></div>
+                      <div>
+                        <div style="font-size:14px;font-weight:700;color:#E2E8F0">{n.title}</div>
+                        <div style="font-size:12px;color:#94A3B8;margin-top:2px">{n.person} · {era.name}</div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+              <div style="text-align:center;margin-top:28px;padding-top:18px;border-top:1px solid #1e2c4a">
+                <p style="font-size:12px;color:#64748B;margin:0">
+                  电磁学认知革命 · moss-550-w.github.io/Electromagnetic
+                </p>
+              </div>
+            </div>
+          </PosterDownload>
+        </div>
+      </div>
+
+      <!-- 3. 科学家肖像合集 -->
+      <div class="mt-6 rounded-2xl border border-line bg-panel/40 p-5 md:p-6">
+        <h3 class="text-lg font-bold">科学家肖像合集</h3>
+        <p class="mt-1 text-sm text-text-dim">四位改变电磁学的凡人科学家,含名言与定位。</p>
+        <div class="mt-5">
+          <PosterDownload fileName="凡人科学家-电磁学认知革命.png" client:visible>
+            <div style="padding:44px 40px;font-family:Inter,system-ui,sans-serif;min-height:440px">
+              <div style="text-align:center;margin-bottom:30px">
+                <h1 style="font-size:26px;font-weight:800;color:#F59E0B;margin:0 0 4px">凡人科学家</h1>
+                <p style="font-size:14px;color:#94A3B8;margin:0">
+                  他们和我们一样,只是更坚持、更愿意独立思考
+                </p>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:680px;margin:0 auto">
+                {scientistEntries.map((entry) => {
+                  const s = entry.data;
+                  return (
+                    <div style="background:#16223f;border-radius:12px;padding:22px 20px;border-top:3px solid {s.accent};display:flex;flex-direction:column;gap:8px">
+                      <div>
+                        <div style="font-size:17px;font-weight:700;color:#E2E8F0">{s.name}</div>
+                        <div style="font-size:12px;color:{s.accent};margin-top:1px">{s.life} · {s.role}</div>
+                      </div>
+                      <p style="font-size:13px;color:#94A3B8;line-height:1.7;margin:0;font-style:italic">
+                        「{s.quote.zh.slice(0, 60)}{s.quote.zh.length > 60 ? '…' : ''}」
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+              <div style="text-align:center;margin-top:26px;padding-top:16px;border-top:1px solid #1e2c4a">
+                <p style="font-size:12px;color:#64748B;margin:0">
+                  电磁学认知革命 · moss-550-w.github.io/Electromagnetic
+                </p>
+              </div>
+            </div>
+          </PosterDownload>
+        </div>
       </div>
     </section>
   </main>
