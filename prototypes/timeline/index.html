@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<!--
+  ⚠️ 原型 / THROWAWAY PROTOTYPE — 非生产代码
+  问题:「交互式电磁学发展时间线」该长什么样?
+  3 个结构性不同的变体,?variant=A|B|C 切换,底部浮动栏 / ← → 键盘切换。
+  零依赖单文件:双击打开即可;或 `python -m http.server` 后访问以获得完整 URL 行为。
+  选定后请将获胜变体重写进真实项目,删除另外两个 + 切换栏。详见同目录 NOTES.md。
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>原型 · 电磁学发展时间线</title>
+<style>
+  :root{
+    --deep-space:#0F172A; --arc-gold:#F59E0B; --magnet-gray:#64748B;
+    --charge-pos:#EF4444; --charge-neg:#3B82F6;
+    --bg:#0B1120; --panel:#111c34; --panel-2:#16223f;
+    --line:#1e2c4a; --text:#E2E8F0; --text-dim:#94A3B8;
+    --font:'Inter',system-ui,-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:radial-gradient(1200px 600px at 70% -10%,#16223f 0%,var(--bg) 55%);
+    color:var(--text);font-family:var(--font);overflow:hidden;
+  }
+  #stage{height:100vh;overflow:hidden}
+  h1,h2,h3{margin:0;font-weight:700;letter-spacing:.2px}
+  .muted{color:var(--text-dim)}
+  .truth{color:var(--charge-pos);font-weight:600}
+  .gold{color:var(--arc-gold)}
+  button{font-family:inherit}
+  ::-webkit-scrollbar{height:10px;width:10px}
+  ::-webkit-scrollbar-thumb{background:#27365c;border-radius:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+
+  /* ---------- 通用:页头 ---------- */
+  .hd{padding:22px 32px 8px}
+  .hd .kicker{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--arc-gold)}
+  .hd h1{font-size:24px;margin-top:4px}
+  .hd p{margin:4px 0 0;font-size:13px;color:var(--text-dim)}
+
+  /* 三层卡片通用层标签 */
+  .layer-tag{font-size:11px;letter-spacing:1px;color:var(--arc-gold);text-transform:uppercase}
+  .insight{border-left:3px solid var(--arc-gold);padding:8px 12px;background:#1a2440;border-radius:0 8px 8px 0;font-style:italic}
+  .key-dot{box-shadow:0 0 0 3px rgba(245,158,11,.25)}
+
+  /* ===================== 变体 A — 横向时间轴 ===================== */
+  .A-wrap{height:100%;display:flex;flex-direction:column}
+  .A-scroll{flex:1;overflow-x:auto;overflow-y:hidden;padding:0 40px;display:flex;align-items:center}
+  .A-track{position:relative;display:flex;height:60%;min-width:max-content;align-items:center}
+  .A-track::before{content:"";position:absolute;left:0;right:0;top:50%;height:3px;
+    background:linear-gradient(90deg,var(--magnet-gray),var(--charge-neg),var(--arc-gold),var(--charge-pos),#A78BFA);
+    transform:translateY(-50%);border-radius:2px}
+  .A-era{position:relative;padding:0 28px;display:flex;align-items:center;gap:34px}
+  .A-era .era-label{position:absolute;top:-46px;left:28px;font-size:13px;font-weight:700}
+  .A-era .era-range{position:absolute;top:-26px;left:28px;font-size:11px;color:var(--text-dim)}
+  .A-era::after{content:"";position:absolute;top:50%;left:0;width:1px;height:120px;background:var(--line);transform:translateY(-50%)}
+  .A-node{position:relative;width:18px;height:18px;border-radius:50%;background:var(--panel-2);
+    border:2px solid var(--accent,#64748B);cursor:pointer;flex:0 0 auto;transition:transform .15s}
+  .A-node:hover{transform:scale(1.35)}
+  .A-node.key{width:26px;height:26px;background:var(--arc-gold);border-color:#fff}
+  .A-node .cap{position:absolute;left:50%;transform:translateX(-50%);width:120px;text-align:center;font-size:11px;color:var(--text-dim)}
+  .A-node:nth-child(odd) .cap{top:24px}
+  .A-node:nth-child(even) .cap{bottom:24px}
+  .A-node .cap b{display:block;color:var(--text);font-size:12px}
+
+  /* 浮层卡片 (A) */
+  .modal-back{position:fixed;inset:0;background:rgba(5,9,20,.66);backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;z-index:50}
+  .modal-back.show{display:flex}
+  .modal{width:min(560px,92vw);max-height:84vh;overflow:auto;background:var(--panel);
+    border:1px solid var(--line);border-radius:16px;padding:22px 24px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .modal .close{float:right;background:none;border:none;color:var(--text-dim);font-size:22px;cursor:pointer}
+  .modal h2{font-size:20px}
+  .modal .meta{font-size:13px;color:var(--text-dim);margin:2px 0 14px}
+  .modal .truthbox{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);
+    border-radius:10px;padding:10px 12px;margin:12px 0;font-size:14px}
+  .acc{border-top:1px solid var(--line);margin-top:12px}
+  .acc button{width:100%;text-align:left;background:none;border:none;color:var(--text);
+    padding:12px 2px;font-size:14px;cursor:pointer;display:flex;justify-content:space-between}
+  .acc .body{display:none;padding:0 2px 14px;font-size:14px;line-height:1.7;color:#cbd5e1}
+  .acc.open .body{display:block}
+  .acc.open button .chev{transform:rotate(90deg)}
+  .chev{transition:transform .15s;color:var(--arc-gold)}
+
+  /* ===================== 变体 B — 垂直时代分段 ===================== */
+  .B-wrap{height:100%;display:grid;grid-template-columns:210px 1fr}
+  .B-nav{border-right:1px solid var(--line);padding:24px 16px;display:flex;flex-direction:column;gap:6px}
+  .B-nav .nb{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-radius:10px;cursor:pointer;border-left:3px solid transparent}
+  .B-nav .nb:hover{background:var(--panel)}
+  .B-nav .nb.active{background:var(--panel);border-left-color:var(--accent)}
+  .B-nav .nb b{font-size:14px}
+  .B-nav .nb span{font-size:11px;color:var(--text-dim)}
+  .B-snap{overflow-y:auto;scroll-snap-type:y mandatory}
+  .B-era{min-height:100%;scroll-snap-align:start;padding:48px 56px;display:flex;flex-direction:column;justify-content:center}
+  .B-era .big{font-size:40px;font-weight:800;letter-spacing:2px}
+  .B-era .rng{color:var(--text-dim);margin:4px 0 28px;font-size:14px}
+  .B-cards{display:flex;flex-direction:column;gap:14px;max-width:720px}
+  .B-card{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:12px;padding:16px 18px;cursor:pointer}
+  .B-card .yr{font-size:12px;color:var(--arc-gold);font-weight:700}
+  .B-card h3{font-size:17px;margin:2px 0 4px}
+  .B-card .truthline{font-size:13px;color:var(--charge-pos);margin-top:6px}
+  .B-card .expand{display:none;margin-top:12px;border-top:1px solid var(--line);padding-top:12px;font-size:14px;line-height:1.7;color:#cbd5e1}
+  .B-card.open .expand{display:block}
+  .B-card .expand .insight{margin-top:12px}
+
+  /* ===================== 变体 C — 双栏 Master-Detail ===================== */
+  .C-wrap{height:100%;display:grid;grid-template-columns:300px 1fr}
+  .C-list{border-right:1px solid var(--line);overflow-y:auto;padding:14px 0}
+  .C-group{padding:6px 0}
+  .C-group .gh{padding:10px 18px 6px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--accent);font-weight:700}
+  .C-item{padding:9px 18px;cursor:pointer;border-left:3px solid transparent;display:flex;gap:10px;align-items:baseline}
+  .C-item:hover{background:var(--panel)}
+  .C-item.active{background:var(--panel-2);border-left-color:var(--arc-gold)}
+  .C-item .y{font-size:11px;color:var(--text-dim);width:42px;flex:0 0 auto}
+  .C-item .n{font-size:14px}
+  .C-item.iskey .n::after{content:" ★";color:var(--arc-gold);font-size:11px}
+  .C-detail{overflow-y:auto;padding:36px 48px}
+  .C-detail .dyr{color:var(--arc-gold);font-weight:700;font-size:13px;letter-spacing:1px}
+  .C-detail h2{font-size:28px;margin:6px 0 2px}
+  .C-detail .dperson{color:var(--text-dim);font-size:15px;margin-bottom:18px}
+  .C-truth{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);border-radius:10px;padding:12px 14px;margin-bottom:22px}
+  .C-tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px}
+  .C-tabs button{background:none;border:none;color:var(--text-dim);padding:10px 16px;cursor:pointer;font-size:14px;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .C-tabs button.active{color:var(--text);border-bottom-color:var(--arc-gold)}
+  .C-pane{font-size:15px;line-height:1.8;color:#cbd5e1;max-width:680px}
+  .C-pane.insight{font-style:italic}
+
+  /* ---------- 浮动切换栏(原型专用,生产需移除) ---------- */
+  #switcher{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:100;
+    display:flex;align-items:center;gap:4px;background:#020617;border:1px solid #334155;
+    border-radius:999px;padding:6px 8px;box-shadow:0 12px 40px rgba(0,0,0,.6)}
+  #switcher button{background:#1e293b;color:#fff;border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px}
+  #switcher button:hover{background:#334155}
+  #switcher .lbl{padding:0 14px;font-size:13px;white-space:nowrap;min-width:170px;text-align:center}
+  #switcher .lbl b{color:var(--arc-gold)}
+  #switcher .proto{font-size:10px;color:#64748B;border-left:1px solid #334155;padding-left:10px;margin-left:4px}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+
+<div id="switcher">
+  <button id="prev" title="上一个 (←)">‹</button>
+  <div class="lbl" id="swLabel"></div>
+  <button id="next" title="下一个 (→)">›</button>
+  <span class="proto">PROTOTYPE</span>
+</div>
+
+<script>
+/* ============================ 数据(真实史实,三变体共享) ============================ */
+const ERAS = [
+  { id:'sprout', name:'萌芽时代', range:'公元前600 – 1600', accent:'#64748B', nodes:[
+    { year:'前600', person:'泰勒斯', title:'琥珀摩擦吸引轻物',
+      truth:'“电(electricity)”源于希腊语琥珀 elektron;但泰勒斯把它与磁、与“灵魂”混为一谈。',
+      detail:'古希腊人发现摩擦后的琥珀能吸引羽毛、碎屑,却无法解释。这一现象被搁置了两千多年,直到近代才被重新当作“电”来研究。',
+      insight:'好奇是科学的起点——一个未解的小现象,可能埋着一门学科。' },
+    { year:'1600', person:'吉尔伯特', title:'《论磁石》首次区分电与磁', key:true,
+      truth:'他造词 electricus,用实验方法系统研究;但仍坚信地球是一块巨大磁石、并主导天体运行。',
+      detail:'威廉·吉尔伯特用“验电器”雏形区分了“琥珀效应(电)”与“磁石(磁)”,被视为电磁学实验传统的开端。',
+      insight:'实验是科学的基础——把猜想交给可重复的操作去裁决。' },
+  ]},
+  { id:'static', name:'静电时代', range:'1600 – 1800', accent:'#3B82F6', nodes:[
+    { year:'1660', person:'格里克', title:'摩擦起电机',
+      truth:'马德堡半球的发明者顺手造出了人类第一台“发电”机器——硫磺球摩擦起电。',
+      detail:'奥托·冯·格里克的旋转硫磺球能持续产生静电,让“批量造电”第一次成为可能,为后续电学实验提供了工具。',
+      insight:'工具的进步常常比理论更早推动学科——能造出现象,才能研究现象。' },
+    { year:'1745', person:'马森布罗克', title:'莱顿瓶:第一个电容器',
+      truth:'实验者被电得“手臂发麻、两天缓不过来”,却由此发现电可以被“储存”。',
+      detail:'莱顿瓶把电荷储存起来,让强电击和系统实验成为可能,是电学走向定量的关键器件。',
+      insight:'意外的危险体验,有时正是新认知的入口。' },
+    { year:'1752', person:'富兰克林', title:'风筝实验与“单流体说”', key:true,
+      truth:'单流体说 vs 杜菲双流体说争论近百年;风筝实验极其危险,后来的模仿者真的被雷电击毙。',
+      detail:'富兰克林提出电是单一“流体”的过多/过少(由此有了正负电的命名),并证明雷电就是电。但“电到底是一种还是两种流体”争论了上百年。',
+      insight:'命名与模型会长久影响后人——“正/负电”今天仍在用,尽管当初的流体图像是错的。' },
+    { year:'1785', person:'库仑', title:'库仑定律:电力的平方反比', key:true,
+      truth:'他用扭秤把“电”第一次写成了公式,电学从此从定性走向定量。',
+      detail:'库仑用精密扭秤测出电荷间作用力与距离平方成反比,形式上与万有引力惊人相似,奠定了静电学的数学基础。',
+      insight:'当一个现象能被精确测量并写成公式,它才真正进入“科学”。' },
+  ]},
+  { id:'current', name:'电流时代', range:'1800 – 1820', accent:'#FB923C', nodes:[
+    { year:'1791', person:'伽伐尼', title:'青蛙腿抽动与“动物电”',
+      truth:'“动物电”假说是错的——但正是这个错误假说,逼出了伏打电堆。',
+      detail:'伽伐尼发现金属接触蛙腿会抽动,提出生物体内存在“动物电”。伏打不认同,反复实验后证明电来自两种金属,而非生命。',
+      insight:'错误的理论也有价值——它提出的问题,引导了正确的实验。' },
+    { year:'1800', person:'伏打', title:'伏打电堆:第一个稳定电源', key:true,
+      truth:'为了反驳老前辈伽伐尼,伏打造出了人类第一个持续供电的电池。',
+      detail:'伏打用锌、铜片和盐水隔层叠成电堆,提供了稳定的持续电流,使“电流”实验成为可能,直接开启了电流时代。',
+      insight:'质疑权威是科学的灵魂——反驳一个错误,可能催生一个时代。' },
+    { year:'1827', person:'欧姆', title:'欧姆定律 U=IR',
+      truth:'发表后被骂了整整10年,被同行斥为“纯粹的数学虚构”,欧姆一度丢了教职。',
+      detail:'乔治·欧姆给出电压、电流、电阻的简洁关系,却因当时德国学界的偏见而长期被压制,晚年才获得承认。',
+      insight:'真理需要时间来证明——被冷落,不等于错误。' },
+  ]},
+  { id:'unify', name:'统一时代', range:'1820 – 1865', accent:'#EF4444', nodes:[
+    { year:'1820', person:'奥斯特', title:'电流让磁针偏转',
+      truth:'这是一次讲座结束后的偶然尝试,并非精心设计的实验——电与磁的统一始于一次“顺手一试”。',
+      detail:'奥斯特在课堂演示时偶然注意到通电导线让旁边的磁针偏转,首次证明电与磁相互关联,震动了整个欧洲科学界。',
+      insight:'偶然只青睐有准备的头脑——别人也会看到,只有他追问了下去。' },
+    { year:'1820', person:'安培', title:'安培定律:电流的磁力学',
+      truth:'奥斯特发现后仅几周,安培就把它数学化——“电动力学”一词由此而来。',
+      detail:'安培迅速用数学描述了电流之间、电流与磁的相互作用,把定性发现变成定量理论。',
+      insight:'快速跟进 + 数学化,是把发现变成学科的关键一步。' },
+    { year:'1831', person:'法拉第', title:'电磁感应:动磁生电', key:true,
+      truth:'铁匠的儿子、只会加减乘除,他的“场”与“力线”概念曾被主流数学家嘲为“玄学”。',
+      detail:'法拉第发现变化的磁场能产生电流,并提出“力线”“场”的图像。他数学薄弱,却用惊人的物理直觉为麦克斯韦铺好了路。',
+      insight:'想象力比知识更重要——直觉有时比公式先抵达真相。' },
+    { year:'1865', person:'麦克斯韦', title:'麦克斯韦方程组与电磁波预言', key:true,
+      truth:'他“凭空”加上位移电流项,预言了电磁波;但生前(48岁早逝)没能看到赫兹的验证。',
+      detail:'麦克斯韦把法拉第的力线翻译成数学,补上位移电流,统一了电、磁、光,并预言以光速传播的电磁波。',
+      insight:'理论思维能预见未来——伟大的理论常常超越它的时代。' },
+  ]},
+  { id:'apply', name:'应用时代', range:'1865 – 至今', accent:'#A78BFA', nodes:[
+    { year:'1887', person:'赫兹', title:'实验证实电磁波存在', key:true,
+      truth:'他验证了电磁波,却断言:“它没有任何实际用途。”——史上最著名的误判之一。',
+      detail:'赫兹用电火花实验产生并接收了电磁波,证实了麦克斯韦的预言,却完全没预见到无线电、雷达、手机的到来。',
+      insight:'即使最伟大的科学家,也无法预见未来——基础发现的价值常在几十年后显现。' },
+    { year:'1901', person:'马可尼', title:'跨大西洋无线电报',
+      truth:'许多物理学家认为地球曲率会挡住电波;马可尼“不懂理论”,却硬是把信号送过了大洋。',
+      detail:'马可尼把电磁波工程化为可商用的无线通信,跨洋传送信号,开启了无线电时代。',
+      insight:'工程师的“无知者无畏”,有时能突破理论家自设的边界。' },
+    { year:'至今', person:'现代', title:'从广播、雷达到 5G 与 Wi-Fi', key:true,
+      truth:'你手中手机里的每一格信号,都是 1865 年那几个方程的直接后代。',
+      detail:'同一套麦克斯韦方程,支撑着广播、电视、雷达、卫星、Wi-Fi、5G——三千年前的琥珀,最终连接了整个星球。',
+      insight:'基础研究的价值无法用短期利益衡量——它定义的是几代人之后的世界。' },
+  ]},
+];
+
+/* ============================ 工具 ============================ */
+const $ = (s,el=document)=>el.querySelector(s);
+const el = (tag,cls,html)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;};
+
+/* ============================ 变体 A — 横向时间轴 ============================ */
+function renderA(stage){
+  stage.innerHTML = `
+    <div class="A-wrap">
+      <div class="hd"><div class="kicker">交互式时间线 · 变体 A</div>
+        <h1>横向时间轴 — 一眼览三千年</h1>
+        <p>横向滚动浏览 · 点击任意节点弹出分层信息卡片(★ 为关键节点)</p>
+      </div>
+      <div class="A-scroll"><div class="A-track" id="Atrack"></div></div>
+    </div>
+    <div class="modal-back" id="Aback"><div class="modal" id="Amodal"></div></div>`;
+  const track = $('#Atrack',stage);
+  ERAS.forEach(era=>{
+    const seg = el('div','A-era'); seg.style.setProperty('--accent',era.accent);
+    seg.appendChild(el('div','era-label',`<span style="color:${era.accent}">●</span> ${era.name}`));
+    seg.appendChild(el('div','era-range',era.range));
+    era.nodes.forEach(n=>{
+      const dot = el('div','A-node'+(n.key?' key':''));
+      dot.style.setProperty('--accent',era.accent);
+      dot.appendChild(el('div','cap',`<b>${n.person}</b>${n.year}`));
+      dot.onclick=()=>openA(n,era);
+      seg.appendChild(dot);
+    });
+    track.appendChild(seg);
+  });
+  $('#Aback',stage).onclick=e=>{ if(e.target.id==='Aback') closeA(); };
+}
+function openA(n,era){
+  const m=$('#Amodal');
+  m.innerHTML=`
+    <button class="close" onclick="closeA()">×</button>
+    <div class="layer-tag">第一层 · 快速</div>
+    <h2>${n.title}</h2>
+    <div class="meta">${n.year} · ${n.person} · <span style="color:${era.accent}">${era.name}</span></div>
+    <div class="truthbox"><span class="truth">历史真相:</span> ${n.truth}</div>
+    <div class="acc"><button onclick="toggleAcc(this)"><span><span class="layer-tag">第二层 · 详情</span> 完整经过</span><span class="chev">▸</span></button><div class="body">${n.detail}</div></div>
+    <div class="acc"><button onclick="toggleAcc(this)"><span><span class="layer-tag">第三层 · 启示</span> 科学思维</span><span class="chev">▸</span></button><div class="body"><div class="insight">${n.insight}</div></div></div>`;
+  $('#Aback').classList.add('show');
+}
+function closeA(){ const b=$('#Aback'); if(b) b.classList.remove('show'); }
+function toggleAcc(btn){ btn.parentElement.classList.toggle('open'); }
+
+/* ============================ 变体 B — 垂直时代分段 ============================ */
+function renderB(stage){
+  stage.innerHTML=`<div class="B-wrap"><div class="B-nav" id="Bnav"></div><div class="B-snap" id="Bsnap"></div></div>`;
+  const nav=$('#Bnav',stage), snap=$('#Bsnap',stage);
+  ERAS.forEach((era,i)=>{
+    const nb=el('div','nb'+(i===0?' active':''));
+    nb.style.setProperty('--accent',era.accent);
+    nb.innerHTML=`<b><span style="color:${era.accent}">●</span> ${era.name}</b><span>${era.range}</span>`;
+    nb.onclick=()=>$('#Bera-'+era.id,stage).scrollIntoView({behavior:'smooth'});
+    nav.appendChild(nb);
+
+    const sec=el('div','B-era'); sec.id='Bera-'+era.id; sec.style.setProperty('--accent',era.accent);
+    sec.innerHTML=`<div class="big" style="color:${era.accent}">${era.name}</div><div class="rng">${era.range}</div>`;
+    const cards=el('div','B-cards');
+    era.nodes.forEach(n=>{
+      const c=el('div','B-card'); c.style.setProperty('--accent',era.accent);
+      c.innerHTML=`
+        <div class="yr">${n.year} · ${n.person}${n.key?' · ★关键':''}</div>
+        <h3>${n.title}</h3>
+        <div class="truthline"><b>历史真相:</b> ${n.truth}</div>
+        <div class="expand">
+          <span class="layer-tag">详情</span><p>${n.detail}</p>
+          <div class="insight"><span class="layer-tag" style="color:#fff">启示</span> ${n.insight}</div>
+        </div>`;
+      c.onclick=()=>c.classList.toggle('open');
+      cards.appendChild(c);
+    });
+    sec.appendChild(cards); snap.appendChild(sec);
+  });
+  // 滚动联动左侧导航高亮
+  snap.addEventListener('scroll',()=>{
+    const tops=[...snap.querySelectorAll('.B-era')];
+    let cur=0; tops.forEach((t,i)=>{ if(t.getBoundingClientRect().top<window.innerHeight*0.45) cur=i; });
+    nav.querySelectorAll('.nb').forEach((nb,i)=>nb.classList.toggle('active',i===cur));
+  });
+}
+
+/* ============================ 变体 C — 双栏 Master-Detail ============================ */
+let C_current=null, C_tab=0;
+function renderC(stage){
+  stage.innerHTML=`<div class="C-wrap"><div class="C-list" id="Clist"></div><div class="C-detail" id="Cdetail"></div></div>`;
+  const list=$('#Clist',stage);
+  ERAS.forEach(era=>{
+    const g=el('div','C-group');
+    g.appendChild(el('div','gh',era.name+' · '+era.range)).style.setProperty('--accent',era.accent);
+    era.nodes.forEach(n=>{
+      const it=el('div','C-item'+(n.key?' iskey':''));
+      it.innerHTML=`<span class="y">${n.year}</span><span class="n">${n.person} — ${n.title}</span>`;
+      it.onclick=()=>{ C_current={n,era}; C_tab=0; paintC(); };
+      it._ref={n,era}; g.appendChild(it);
+    });
+    list.appendChild(g);
+  });
+  C_current=C_current||{n:ERAS[3].nodes[2],era:ERAS[3]}; // 默认选中法拉第
+  paintC();
+}
+function paintC(){
+  const {n,era}=C_current;
+  // 高亮列表
+  document.querySelectorAll('.C-item').forEach(it=>{
+    it.classList.toggle('active', it._ref && it._ref.n===n);
+  });
+  const tabs=['概览','详情','启示'];
+  const panes=[
+    `<div class="C-pane">${n.title}。<br><br>这是${era.name}(${era.range})中的关键一步。点击上方标签查看完整经过与科学启示。</div>`,
+    `<div class="C-pane">${n.detail}</div>`,
+    `<div class="C-pane insight">「 ${n.insight} 」</div>`,
+  ];
+  $('#Cdetail').innerHTML=`
+    <div class="dyr">${n.year} · <span style="color:${era.accent}">${era.name}</span>${n.key?' · ★ 关键节点':''}</div>
+    <h2>${n.title}</h2>
+    <div class="dperson">${n.person}</div>
+    <div class="C-truth"><span class="truth">历史真相:</span> ${n.truth}</div>
+    <div class="C-tabs">${tabs.map((t,i)=>`<button class="${i===C_tab?'active':''}" onclick="setCTab(${i})">${t}</button>`).join('')}</div>
+    ${panes[C_tab]}`;
+}
+function setCTab(i){ C_tab=i; paintC(); }
+
+/* ============================ 切换栏 / 路由 ============================ */
+const VARIANTS={
+  A:{name:'横向时间轴',render:renderA},
+  B:{name:'垂直时代分段',render:renderB},
+  C:{name:'双栏 Master-Detail',render:renderC},
+};
+const ORDER=['A','B','C'];
+let current = (new URLSearchParams(location.search).get('variant')||'A').toUpperCase();
+if(!VARIANTS[current]) current='A';
+
+function setVariant(v){
+  current=v;
+  try{ const u=new URL(location); u.searchParams.set('variant',v); history.replaceState(null,'',u); }catch(e){/* file:// 下忽略 */}
+  $('#swLabel').innerHTML=`<b>${v}</b> — ${VARIANTS[v].name}`;
+  VARIANTS[v].render($('#stage'));
+}
+function step(d){ const i=(ORDER.indexOf(current)+d+ORDER.length)%ORDER.length; setVariant(ORDER[i]); }
+
+$('#prev').onclick=()=>step(-1);
+$('#next').onclick=()=>step(1);
+document.addEventListener('keydown',e=>{
+  const t=e.target.tagName;
+  if(t==='INPUT'||t==='TEXTAREA'||e.target.isContentEditable) return;
+  if(e.key==='ArrowLeft') step(-1);
+  if(e.key==='ArrowRight') step(1);
+});
+setVariant(current);
+</script>
+</body>
+</html>
