@@ -3,11 +3,21 @@
  * 所有站内链接、public/ 资源引用都必须经过这里,不要手写裸路径 `/timeline`。
  * import.meta.env.BASE_URL 由 Astro 注入,等于 astro.config 的 base(末尾带 /)。
  */
+import { DEFAULT_LOCALE, type Locale } from '../i18n/config';
+
 const BASE = import.meta.env.BASE_URL;
+const join = (p: string): string =>
+  `${BASE}/${String(p).replace(/^\/+/, '')}`.replace(/\/{2,}/g, '/');
 
-/** 拼接 base + 路径,并压缩重复斜杠。href('timeline') → '/timeline' 或 '/<repo>/timeline' */
-export const href = (path: string): string =>
-  `${BASE}/${String(path).replace(/^\/+/, '')}`.replace(/\/{2,}/g, '/');
+/**
+ * 站内链接。href('timeline') → '/timeline' 或 '/<repo>/timeline'。
+ * locale 为 i18n 预留:默认语言不加前缀(保持现有 URL);非默认 → '/<locale>/timeline'。
+ */
+export const href = (path: string, locale: Locale = DEFAULT_LOCALE): string => {
+  const clean = String(path).replace(/^\/+/, '');
+  const withLocale = locale === DEFAULT_LOCALE ? clean : `${locale}/${clean}`;
+  return join(withLocale);
+};
 
-/** public/ 静态资源同理。asset('fonts/inter.woff2') / asset('images/x.jpg') */
-export const asset = href;
+/** public/ 静态资源:不带语言前缀。asset('favicon.svg') / asset('images/x.jpg') */
+export const asset = (path: string): string => join(path);

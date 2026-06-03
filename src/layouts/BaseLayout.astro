@@ -5,6 +5,8 @@ import '@fontsource/inter/700.css';
 import '../styles/global.css';
 import Seo from '../components/seo/Seo.astro';
 import { asset } from '../lib/href';
+import { DEFAULT_LOCALE, HTML_LANG } from '../i18n/config';
+import { t } from '../i18n/ui';
 
 interface Props {
   title: string;
@@ -14,7 +16,7 @@ interface Props {
   type?: 'website' | 'article';
   jsonLd?: object | object[];
 }
-const { title, description, lang = 'zh-CN', image, type, jsonLd } = Astro.props;
+const { title, description, lang = HTML_LANG[DEFAULT_LOCALE], image, type, jsonLd } = Astro.props;
 ---
 
 <!doctype html>
@@ -27,7 +29,7 @@ const { title, description, lang = 'zh-CN', image, type, jsonLd } = Astro.props;
     <slot name="head" />
   </head>
   <body class="bg-bg text-text font-sans antialiased">
-    <a href="#main" class="skip-link">跳到主内容</a>
+    <a href="#main" class="skip-link">{t('common.skipToMain')}</a>
     <slot />
   </body>
 </html>

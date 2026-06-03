@@ -1,21 +1,23 @@
 ---
 import { href } from '../../lib/href';
+import { t, type UIKey } from '../../i18n/ui';
 
 // 各板块均已落地;upcoming 标记保留以便未来新增板块时不留死链。
-const items = [
-  { label: '交互式时间线', to: 'timeline', upcoming: false },
-  { label: '理论与争议', to: 'theory', upcoming: false },
-  { label: '工程应用史', to: 'engineering', upcoming: false },
-  { label: '科学家列传', to: 'scientists', upcoming: false },
-  { label: '科学启示录', to: 'insights', upcoming: false },
-  { label: '资源中心', to: 'resources', upcoming: false },
+// 导航文案走 i18n 字典(t),为多语言预留;新增语言只需在 ui.ts 补译。
+const items: { key: UIKey; to: string; upcoming: boolean }[] = [
+  { key: 'nav.timeline', to: 'timeline', upcoming: false },
+  { key: 'nav.theory', to: 'theory', upcoming: false },
+  { key: 'nav.engineering', to: 'engineering', upcoming: false },
+  { key: 'nav.scientists', to: 'scientists', upcoming: false },
+  { key: 'nav.insights', to: 'insights', upcoming: false },
+  { key: 'nav.resources', to: 'resources', upcoming: false },
 ];
 ---
 
 <nav id="site-nav" aria-label="主导航">
   <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
     <a href={href('/')} class="text-base font-bold tracking-wide text-text">
-      <span class="text-arc-gold">⚡</span> 电磁学
+      <span class="text-arc-gold">⚡</span> {t('nav.brand')}
     </a>
 
     <!-- 桌面导航 -->
@@ -25,13 +27,13 @@ const items = [
           it.upcoming ? (
             <li>
               <span aria-disabled="true" class="cursor-not-allowed text-text-dim/50" title="即将上线">
-                {it.label}
+                {t(it.key)}
               </span>
             </li>
           ) : (
             <li>
               <a href={href(it.to)} class="text-text-dim transition hover:text-arc-gold">
-                {it.label}
+                {t(it.key)}
               </a>
             </li>
           ),
@@ -40,7 +42,7 @@ const items = [
     </ul>
 
     <!-- 移动端:只给主入口 -->
-    <a href={href('timeline')} class="text-sm text-arc-gold md:hidden">时间线 →</a>
+    <a href={href('timeline')} class="text-sm text-arc-gold md:hidden">{t('nav.timelineShort')} →</a>
   </div>
 </nav>
 
