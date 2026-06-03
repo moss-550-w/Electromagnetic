@@ -1,19 +1,30 @@
 ---
 import { INSIGHTS } from '../../data/home';
+import { href } from '../../lib/href';
 
 // 复制一份实现无缝循环(translateX -50% 刚好滚过一份)
 const loop = [...INSIGHTS, ...INSIGHTS];
 ---
 
-<section class="ticker-wrap border-y border-line bg-panel/40 py-4" aria-label="科学启示">
-  <div class="ticker flex w-max gap-12 px-6">
-    {
-      loop.map((s, i) => (
-        <span class="whitespace-nowrap text-sm text-text-dim" aria-hidden={i >= INSIGHTS.length ? 'true' : undefined}>
-          <span class="text-arc-gold">「</span>{s}<span class="text-arc-gold">」</span>
-        </span>
-      ))
-    }
+<section class="border-y border-line bg-panel/40 py-3" aria-label="科学启示">
+  <div class="mx-auto mb-2 flex max-w-6xl items-center justify-between px-6 text-xs">
+    <span class="uppercase tracking-widest text-text-dim">科学启示</span>
+    <a href={href('insights')} class="font-semibold text-arc-gold hover:underline">查看科学启示录 →</a>
+  </div>
+
+  <div class="ticker-wrap overflow-hidden">
+    <div class="ticker flex w-max gap-12 px-6">
+      {
+        loop.map((s, i) => (
+          <span
+            class="whitespace-nowrap text-sm text-text-dim"
+            aria-hidden={i >= INSIGHTS.length ? 'true' : undefined}
+          >
+            <span class="text-arc-gold">「</span>{s}<span class="text-arc-gold">」</span>
+          </span>
+        ))
+      }
+    </div>
   </div>
 </section>
 

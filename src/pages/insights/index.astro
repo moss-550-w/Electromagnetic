@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteNav from '../../components/nav/SiteNav.astro';
+import {
+  DISCOVERY_LAWS,
+  YOUTH_ADVICE,
+  SOCIETY_POINTS,
+  LESSONS,
+  INSIGHTS_INTRO,
+} from '../../data/lessons';
+---
+
+<BaseLayout
+  title="科学启示录 · 电磁学认知革命"
+  description="从三千年电磁学史中提炼的科学方法论与人生智慧:科学发现的 5 条规律、给年轻人的 5 条建议、科学与社会,以及电磁学史的 10 个教训。"
+>
+  <SiteNav />
+  <main id="main" class="mx-auto max-w-5xl px-5 pb-24 pt-24">
+    <header class="max-w-2xl">
+      <h1 class="text-4xl font-extrabold md:text-5xl">科学启示录</h1>
+      <p class="mt-4 text-lg text-text-dim">{INSIGHTS_INTRO}</p>
+    </header>
+
+    <!-- 科学发现的 5 条规律 -->
+    <section class="mt-12" aria-labelledby="laws">
+      <h2 id="laws" class="text-2xl font-bold">科学发现的 5 条规律</h2>
+      <ol class="mt-5 flex flex-col gap-3">
+        {
+          DISCOVERY_LAWS.map((l, i) => (
+            <li class="flex gap-4 rounded-xl border border-line bg-panel p-5">
+              <span class="text-2xl font-extrabold tabular-nums text-arc-gold">{i + 1}</span>
+              <div>
+                <h3 class="font-bold text-text">{l.title}</h3>
+                <p class="mt-1 text-sm leading-7 text-text-dim">{l.desc}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- 给年轻人的 5 条建议 -->
+    <section class="mt-12" aria-labelledby="advice">
+      <h2 id="advice" class="text-2xl font-bold">给年轻人的 5 条建议</h2>
+      <ol class="mt-5 grid gap-3 md:grid-cols-2">
+        {
+          YOUTH_ADVICE.map((a, i) => (
+            <li class="flex gap-4 rounded-xl border border-line bg-panel p-5">
+              <span class="text-xl font-extrabold tabular-nums text-arc-gold">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3 class="font-bold text-text">{a.title}</h3>
+                <p class="mt-1 text-sm leading-7 text-text-dim">{a.note}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- 科学与社会 -->
+    <section class="mt-12" aria-labelledby="society">
+      <h2 id="society" class="text-2xl font-bold">科学与社会</h2>
+      <div class="mt-5 grid gap-4 md:grid-cols-3">
+        {
+          SOCIETY_POINTS.map((p) => (
+            <article class="rounded-xl border border-line bg-panel p-5">
+              <h3 class="font-bold text-text">{p.title}</h3>
+              <p class="mt-2 text-sm leading-7 text-text-dim">{p.desc}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- 电磁学史的 10 个教训 -->
+    <section class="mt-12" aria-labelledby="lessons">
+      <h2 id="lessons" class="text-2xl font-bold">电磁学史的 10 个教训</h2>
+      <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        {
+          LESSONS.map((l) => (
+            <article class="rounded-xl border border-line bg-panel p-4 transition hover:border-arc-gold/50">
+              <div class="text-2xl font-extrabold tabular-nums text-text-dim/60">{String(l.n).padStart(2, '0')}</div>
+              <div class="mt-1 text-xs text-text-dim">{l.person}</div>
+              <p class="mt-1 text-sm font-semibold leading-6 text-arc-gold">{l.lesson}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+  </main>
+</BaseLayout>
