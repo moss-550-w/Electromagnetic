@@ -1,8 +1,20 @@
 /**
  * 电磁学发展时间线数据 —— 内容/表现分离的单一可信源。
- * 史实逐字保留(CLAUDE.md 八节:史实勿演绎);组件只负责渲染。
- * 迁移自 prototypes/timeline/index.html 的 ERAS。
+ * 史实逐字保留(CLAUDE.md 八:史实勿演绎);组件只负责渲染。
+ * M1 扩展:links(延伸阅读)、parallel(平行宇宙推演,非史实)、worldEvents(同时代世界史)。
  */
+
+export interface TimelineLink {
+  label: string;
+  /** 站内 slug,交给 href() */
+  to: string;
+}
+
+/** 平行宇宙推演:基于历史逻辑的「如果」,在 UI 上与史实明确区分(CLAUDE.md 八)*/
+export interface ParallelUniverse {
+  question: string;
+  reasoning: string;
+}
 
 export interface TimelineNode {
   /** 年份标签,字符串形式(含「前600」「至今」等非数值)*/
@@ -19,8 +31,10 @@ export interface TimelineNode {
   key?: boolean;
   /** 历史图片(本轮多为空;有值时 alt 必填)*/
   image?: { src: string; alt: string };
-  /** 预留:关联跳转(理论/工程/科学家),本轮为空 */
-  links?: { theory?: string; engineering?: string; scientist?: string };
+  /** 延伸阅读:跳转理论/工程/科学家页 */
+  links?: TimelineLink[];
+  /** 平行宇宙推演(关键分歧点)*/
+  parallel?: ParallelUniverse;
 }
 
 export interface Era {
@@ -29,12 +43,15 @@ export interface Era {
   range: string;
   /** 时代主题色(数据属性,用于强调描边/标识,非 Tailwind 工具类)*/
   accent: string;
+  /** 同时代的世界大事,用于「时间线对比」*/
+  worldEvents?: string[];
   nodes: TimelineNode[];
 }
 
 export const ERAS: Era[] = [
   {
     id: 'sprout', name: '萌芽时代', range: '公元前600 – 1600', accent: '#64748B',
+    worldEvents: ['前 551 孔子诞生', '前 221 秦统一中国', '1450s 古登堡印刷术', '1492 哥伦布到达美洲'],
     nodes: [
       {
         year: '前600', person: '泰勒斯', title: '琥珀摩擦吸引轻物',
@@ -52,6 +69,7 @@ export const ERAS: Era[] = [
   },
   {
     id: 'static', name: '静电时代', range: '1600 – 1800', accent: '#3B82F6',
+    worldEvents: ['1687 牛顿《自然哲学的数学原理》', '1760s 第一次工业革命开端', '1776 美国独立', '1789 法国大革命'],
     nodes: [
       {
         year: '1660', person: '格里克', title: '摩擦起电机',
@@ -70,23 +88,30 @@ export const ERAS: Era[] = [
         truth: '单流体说 vs 杜菲双流体说争论近百年;风筝实验极其危险,后来的模仿者真的被雷电击毙。',
         detail: '富兰克林提出电是单一「流体」的过多/过少(由此有了正负电的命名),并证明雷电就是电。但「电到底是一种还是两种流体」争论了上百年。',
         insight: '命名与模型会长久影响后人——「正/负电」今天仍在用,尽管当初的流体图像是错的。',
+        parallel: {
+          question: '如果富兰克林的风筝被雷直接击中?',
+          reasoning: '他极可能当场殒命——后来的模仿者正是如此。但「雷电即电」的猜想当时已在欧洲流传,验证至多延后数年。科学的进程依赖的是观念的成熟,而非某一个人的幸存。',
+        },
       },
       {
         year: '1785', person: '库仑', title: '库仑定律:电力的平方反比', key: true,
         truth: '他用扭秤把「电」第一次写成了公式,电学从此从定性走向定量。',
         detail: '库仑用精密扭秤测出电荷间作用力与距离平方成反比,形式上与万有引力惊人相似,奠定了静电学的数学基础。',
         insight: '当一个现象能被精确测量并写成公式,它才真正进入「科学」。',
+        links: [{ label: '理论:库仑定律', to: 'theory/coulomb-law' }],
       },
     ],
   },
   {
     id: 'current', name: '电流时代', range: '1800 – 1820', accent: '#FB923C',
+    worldEvents: ['1804 拿破仑称帝', '1807 蒸汽船投入商用', '1815 滑铁卢战役'],
     nodes: [
       {
         year: '1791', person: '伽伐尼', title: '青蛙腿抽动与「动物电」',
         truth: '「动物电」假说是错的——但正是这个错误假说,逼出了伏打电堆。',
         detail: '伽伐尼发现金属接触蛙腿会抽动,提出生物体内存在「动物电」。伏打不认同,反复实验后证明电来自两种金属,而非生命。',
         insight: '错误的理论也有价值——它提出的问题,引导了正确的实验。',
+        links: [{ label: '错误理论博物馆:动物电假说', to: 'theory/errors' }],
       },
       {
         year: '1800', person: '伏打', title: '伏打电堆:第一个稳定电源', key: true,
@@ -99,17 +124,23 @@ export const ERAS: Era[] = [
         truth: '发表后被骂了整整10年,被同行斥为「纯粹的数学虚构」,欧姆一度丢了教职。',
         detail: '乔治·欧姆给出电压、电流、电阻的简洁关系,却因当时德国学界的偏见而长期被压制,晚年才获得承认。',
         insight: '真理需要时间来证明——被冷落,不等于错误。',
+        links: [{ label: '被遗忘的先驱', to: 'scientists#forgotten' }],
       },
     ],
   },
   {
     id: 'unify', name: '统一时代', range: '1820 – 1865', accent: '#EF4444',
+    worldEvents: ['1848 欧洲革命浪潮', '1859 达尔文《物种起源》', '1861 美国南北战争'],
     nodes: [
       {
         year: '1820', person: '奥斯特', title: '电流让磁针偏转',
         truth: '这是一次讲座结束后的偶然尝试,并非精心设计的实验——电与磁的统一始于一次「顺手一试」。',
         detail: '奥斯特在课堂演示时偶然注意到通电导线让旁边的磁针偏转,首次证明电与磁相互关联,震动了整个欧洲科学界。',
         insight: '偶然只青睐有准备的头脑——别人也会看到,只有他追问了下去。',
+        parallel: {
+          question: '如果奥斯特没做那次偶然实验?',
+          reasoning: '电与磁的关联是当时呼之欲出的问题,安培、法拉第都在逼近。发现或许推迟几年,但电磁学的统一不会缺席——偶然决定的是时间,而非方向。',
+        },
       },
       {
         year: '1820', person: '安培', title: '安培定律:电流的磁力学',
@@ -122,35 +153,58 @@ export const ERAS: Era[] = [
         truth: '铁匠的儿子、只会加减乘除,他的「场」与「力线」概念曾被主流数学家嘲为「玄学」。',
         detail: '法拉第发现变化的磁场能产生电流,并提出「力线」「场」的图像。他数学薄弱,却用惊人的物理直觉为麦克斯韦铺好了路。',
         insight: '想象力比知识更重要——直觉有时比公式先抵达真相。',
+        links: [
+          { label: '理论:电磁感应定律', to: 'theory/faraday-induction' },
+          { label: '人物:迈克尔·法拉第', to: 'scientists/faraday' },
+          { label: '工程:发电机与电网', to: 'engineering/generator-grid' },
+        ],
       },
       {
         year: '1865', person: '麦克斯韦', title: '麦克斯韦方程组与电磁波预言', key: true,
         truth: '他「凭空」加上位移电流项,预言了电磁波;但生前(48岁早逝)没能看到赫兹的验证。',
         detail: '麦克斯韦把法拉第的力线翻译成数学,补上位移电流,统一了电、磁、光,并预言以光速传播的电磁波。',
         insight: '理论思维能预见未来——伟大的理论常常超越它的时代。',
+        links: [
+          { label: '理论:麦克斯韦方程组', to: 'theory/maxwell-equations' },
+          { label: '人物:詹姆斯·麦克斯韦', to: 'scientists/maxwell' },
+        ],
+        parallel: {
+          question: '如果麦克斯韦没有提出位移电流?',
+          reasoning: '方程组将无法自洽,也无法预言电磁波。无线电时代很可能推迟数十年,直到有人补上这一项——一个数学项的有无,真切地改写了技术史的时间表。',
+        },
       },
     ],
   },
   {
     id: 'apply', name: '应用时代', range: '1865 – 至今', accent: '#A78BFA',
+    worldEvents: ['1876 电话发明', '1903 莱特兄弟首飞', '1945 第二次世界大战结束', '1969 阿波罗登月', '1990s 互联网普及'],
     nodes: [
       {
         year: '1887', person: '赫兹', title: '实验证实电磁波存在', key: true,
         truth: '他验证了电磁波,却断言:「它没有任何实际用途。」——史上最著名的误判之一。',
         detail: '赫兹用电火花实验产生并接收了电磁波,证实了麦克斯韦的预言,却完全没预见到无线电、雷达、手机的到来。',
         insight: '即使最伟大的科学家,也无法预见未来——基础发现的价值常在几十年后显现。',
+        links: [
+          { label: '人物:海因里希·赫兹', to: 'scientists/hertz' },
+          { label: '工程:无线电与通信', to: 'engineering/wireless-comm' },
+        ],
       },
       {
         year: '1901', person: '马可尼', title: '跨大西洋无线电报',
         truth: '许多物理学家认为地球曲率会挡住电波;马可尼「不懂理论」,却硬是把信号送过了大洋。',
         detail: '马可尼把电磁波工程化为可商用的无线通信,跨洋传送信号,开启了无线电时代。',
         insight: '工程师的「无知者无畏」,有时能突破理论家自设的边界。',
+        links: [{ label: '工程:无线电与通信', to: 'engineering/wireless-comm' }],
       },
       {
         year: '至今', person: '现代', title: '从广播、雷达到 5G 与 Wi-Fi', key: true,
         truth: '你手中手机里的每一格信号,都是 1865 年那几个方程的直接后代。',
         detail: '同一套麦克斯韦方程,支撑着广播、电视、雷达、卫星、Wi-Fi、5G——三千年前的琥珀,最终连接了整个星球。',
         insight: '基础研究的价值无法用短期利益衡量——它定义的是几代人之后的世界。',
+        links: [
+          { label: '工程:无线电与通信', to: 'engineering/wireless-comm' },
+          { label: '工程:发电机与电网', to: 'engineering/generator-grid' },
+        ],
       },
     ],
   },

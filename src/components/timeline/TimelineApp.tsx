@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Era, TimelineNode } from '../../data/timeline';
 import LayeredCard from '../shared/LayeredCard';
+import { href } from '../../lib/href';
 
 /**
  * 交互式时间线 —— B(垂直 scroll-snap 沉浸)+ C(详情常驻面板)混合。
- * 桌面:三栏 [时代导航 | scroll-snap 主轴 | 常驻详情];
- * 移动:单列滚动 + 底部抽屉详情。
- * 数据由 Astro 构建时注入 props(client:visible 水合,纯静态)。
+ * 桌面:三栏 [时代导航 | scroll-snap 主轴 | 常驻详情];移动:单列滚动 + 底部抽屉。
+ * M1 深化:延伸阅读(links)、平行宇宙(parallel,非史实)、同时代世界(era.worldEvents)。
  */
 
 interface Props {
@@ -18,6 +18,8 @@ interface Selection {
   node: TimelineNode;
 }
 
+const PARALLEL = '#A78BFA';
+
 const prefersReduced = (): boolean =>
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -28,7 +30,6 @@ export default function TimelineApp({ eras }: Props) {
     [eras],
   );
 
-  // 默认选中麦克斯韦(沿用原型);找不到则取首个节点。
   const initial = flat.find((x) => x.node.person === '麦克斯韦') ?? flat[0];
   const [selected, setSelected] = useState<Selection>(initial);
   const [activeEraId, setActiveEraId] = useState<string>(eras[0]?.id ?? '');
@@ -37,7 +38,6 @@ export default function TimelineApp({ eras }: Props) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
-  // IntersectionObserver:滚动时高亮当前时代(替代原型的 scroll + getBoundingClientRect)
   useEffect(() => {
     const root = scrollRef.current;
     if (!root) return;
@@ -54,7 +54,6 @@ export default function TimelineApp({ eras }: Props) {
     return () => io.disconnect();
   }, [eras]);
 
-  // 移动端抽屉:Esc 关闭
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setDrawerOpen(false);
@@ -100,11 +99,7 @@ export default function TimelineApp({ eras }: Props) {
       </nav>
 
       {/* B · 垂直 scroll-snap 主轴 */}
-      <div
-        ref={scrollRef}
-        className="h-screen snap-y snap-mandatory overflow-y-auto"
-        tabIndex={-1}
-      >
+      <div ref={scrollRef} className="h-screen snap-y snap-mandatory overflow-y-auto" tabIndex={-1}>
         {eras.map((era) => (
           <section
             key={era.id}
@@ -117,9 +112,17 @@ export default function TimelineApp({ eras }: Props) {
             <h2 className="text-4xl font-extrabold tracking-wide" style={{ color: era.accent }}>
               {era.name}
             </h2>
-            <p className="mb-7 mt-1 text-sm text-text-dim">{era.range}</p>
+            <p className="mt-1 text-sm text-text-dim">{era.range}</p>
 
-            <ul className="flex max-w-2xl flex-col gap-3">
+            {/* 时间线对比:同时代世界史 */}
+            {era.worldEvents && era.worldEvents.length > 0 && (
+              <div className="mt-3 max-w-2xl rounded-lg border border-line bg-panel/50 px-4 py-2.5">
+                <span className="mr-2 text-[11px] uppercase tracking-wide text-text-dim">同时代世界</span>
+                <span className="text-xs text-text-dim">{era.worldEvents.join(' · ')}</span>
+              </div>
+            )}
+
+            <ul className="mt-7 flex max-w-2xl flex-col gap-3">
               {era.nodes.map((node) => {
                 const isSel = selected.node === node;
                 return (
@@ -135,6 +138,7 @@ export default function TimelineApp({ eras }: Props) {
                       <span className="text-xs font-bold text-arc-gold">
                         {node.year} · {node.person}
                         {node.key ? ' · ★ 关键' : ''}
+                        {node.parallel ? ' · ⎇ 分歧点' : ''}
                       </span>
                       <strong className="mt-0.5 block text-lg font-bold text-text">{node.title}</strong>
                       <span className="mt-1.5 block text-[13px] text-charge-pos">
@@ -164,6 +168,7 @@ export default function TimelineApp({ eras }: Props) {
         >
           收起 ▾
         </button>
+
         <LayeredCard
           key={`${selected.node.person}-${selected.node.year}`}
           quick={{
@@ -177,6 +182,33 @@ export default function TimelineApp({ eras }: Props) {
           isKey={selected.node.key}
           accent={selected.era.accent}
         />
+
+        {/* 延伸阅读:关联跳转 */}
+        {selected.node.links && selected.node.links.length > 0 && (
+          <div className="mt-5 border-t border-line pt-4">
+            <div className="mb-2 text-xs uppercase tracking-wide text-text-dim">延伸阅读</div>
+            <ul className="flex flex-col gap-2">
+              {selected.node.links.map((l) => (
+                <li key={l.to}>
+                  <a href={href(l.to)} className="text-sm text-arc-gold hover:underline">
+                    {l.label} →
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* 平行宇宙:基于历史逻辑的推演,与史实明确区分 */}
+        {selected.node.parallel && (
+          <div className="mt-5 rounded-xl border border-dashed p-4" style={{ borderColor: PARALLEL }}>
+            <div className="mb-1.5 text-xs font-bold" style={{ color: PARALLEL }}>
+              ⎇ 平行宇宙 · 基于历史逻辑的推演(非史实)
+            </div>
+            <p className="text-sm font-semibold text-text">{selected.node.parallel.question}</p>
+            <p className="mt-1.5 text-sm leading-7 text-text-dim">{selected.node.parallel.reasoning}</p>
+          </div>
+        )}
       </aside>
     </div>
   );
