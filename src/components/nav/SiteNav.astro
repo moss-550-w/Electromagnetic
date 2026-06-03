@@ -1,13 +1,14 @@
 ---
 import { href } from '../../lib/href';
 
-// 本轮仅时间线真实可达;其余板块标 upcoming,渲染为 aria-disabled,不留死链。
+// 各板块均已落地;upcoming 标记保留以便未来新增板块时不留死链。
 const items = [
   { label: '交互式时间线', to: 'timeline', upcoming: false },
   { label: '理论与争议', to: 'theory', upcoming: false },
   { label: '工程应用史', to: 'engineering', upcoming: false },
   { label: '科学家列传', to: 'scientists', upcoming: false },
   { label: '科学启示录', to: 'insights', upcoming: false },
+  { label: '资源中心', to: 'resources', upcoming: false },
 ];
 ---
 
