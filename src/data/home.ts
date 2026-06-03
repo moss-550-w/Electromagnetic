@@ -25,7 +25,7 @@ export const FEATURES: FeatureCard[] = [
     id: 'formulas',
     title: '改变世界的 10 个公式',
     desc: '从库仑定律到麦克斯韦方程组,拆解每个公式的「前世今生」与它催生的产业。',
-    upcoming: true,
+    to: 'theory',
   },
   {
     id: 'without-em',

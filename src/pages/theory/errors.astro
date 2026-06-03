@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteNav from '../../components/nav/SiteNav.astro';
+import { ERROR_THEORIES, MUSEUM_INTRO } from '../../data/errors';
+import { href } from '../../lib/href';
+
+// 四面呈现:核心 / 为何可信 / 如何被推翻 / 积极贡献。
+const PARTS = [
+  { key: 'core', label: '理论核心', tone: 'neutral' },
+  { key: 'whyBelieved', label: '为何当时可信', tone: 'neutral' },
+  { key: 'howRefuted', label: '如何被推翻', tone: 'refute' },
+  { key: 'contribution', label: '积极贡献', tone: 'merit' },
+] as const;
+---
+
+<BaseLayout
+  title="错误理论博物馆 · 理论的诞生与争议"
+  description="动物电、单/双流体说、超距作用、以太假说——那些被推翻的理论,以及它们为科学进步铺下的路。"
+>
+  <SiteNav />
+  <main id="main" class="mx-auto max-w-4xl px-5 pb-24 pt-24">
+    <a href={href('theory')} class="text-sm text-text-dim transition hover:text-arc-gold">← 理论与争议</a>
+
+    <header class="mt-4">
+      <h1 class="text-4xl font-extrabold md:text-5xl">错误理论博物馆</h1>
+      <p class="mt-4 max-w-2xl text-lg italic leading-relaxed text-text-dim">「 {MUSEUM_INTRO} 」</p>
+    </header>
+
+    <div class="mt-10 flex flex-col gap-6">
+      {
+        ERROR_THEORIES.map((e) => (
+          <article class="rounded-2xl border border-line bg-panel p-6" style={`border-left:4px solid ${e.accent}`}>
+            <div class="text-xs font-bold" style={`color:${e.accent}`}>{e.era}</div>
+            <h2 class="mt-1 text-2xl font-bold">{e.name}</h2>
+
+            <div class="mt-4 grid gap-4 md:grid-cols-2">
+              {PARTS.map((p) => (
+                <div
+                  class={`rounded-lg bg-panel-2 p-4 ${
+                    p.tone === 'merit'
+                      ? 'border-l-2 border-arc-gold'
+                      : p.tone === 'refute'
+                        ? 'border-l-2 border-charge-pos/60'
+                        : ''
+                  }`}
+                >
+                  <h3
+                    class={`mb-1.5 text-xs font-bold uppercase tracking-wide ${
+                      p.tone === 'merit'
+                        ? 'text-arc-gold'
+                        : p.tone === 'refute'
+                          ? 'text-charge-pos'
+                          : 'text-text-dim'
+                    }`}
+                  >
+                    {p.label}
+                  </h3>
+                  <p class="text-sm leading-7 text-text">{e[p.key]}</p>
+                </div>
+              ))}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>

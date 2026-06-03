@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteNav from '../../components/nav/SiteNav.astro';
+import Formula from '../../components/shared/Formula.astro';
+import { THEORIES } from '../../data/theories';
+import { href } from '../../lib/href';
+
+export function getStaticPaths() {
+  return THEORIES.map((t) => ({ params: { slug: t.slug }, props: { theory: t } }));
+}
+const { theory } = Astro.props;
+
+// 7 段固定结构(design.md 3.1)。heading 在模板,body 在数据。
+const SECTIONS = [
+  { key: 'prelude', label: '诞生前夜', sub: '当时的困境与主流观点' },
+  { key: 'breakthrough', label: '突破时刻', sub: '发现的完整过程' },
+  { key: 'core', label: '核心内容', sub: '公式与通俗解释' },
+  { key: 'controversy', label: '世纪之争', sub: '反对意见与争论焦点' },
+  { key: 'victory', label: '最终胜利', sub: '理论被接受的过程' },
+  { key: 'legacy', label: '工程遗产', sub: '催生了哪些技术' },
+  { key: 'insight', label: '科学启示', sub: '可迁移的科学思维' },
+] as const;
+---
+
+<BaseLayout title={`${theory.name} · 理论的诞生与争议`} description={theory.summary}>
+  <SiteNav />
+  <main id="main" class="mx-auto max-w-3xl px-5 pb-24 pt-24">
+    <a href={href('theory')} class="text-sm text-text-dim transition hover:text-arc-gold">← 理论与争议</a>
+
+    <header class="mt-4 border-b border-line pb-8">
+      <div class="text-sm font-bold" style={`color:${theory.accent}`}>
+        {theory.year} · {theory.people.join('、')}
+      </div>
+      <h1 class="mt-2 text-4xl font-extrabold leading-tight">{theory.name}</h1>
+      <p class="mt-1 text-lg text-text-dim">{theory.subtitle}</p>
+      <p class="mt-5 rounded-xl border border-line bg-panel p-4 leading-relaxed">
+        <span class="font-semibold text-arc-gold">核心结论:</span>{theory.summary}
+      </p>
+    </header>
+
+    <article class="mt-10 flex flex-col gap-10">
+      {
+        SECTIONS.map((s, i) => (
+          <section aria-labelledby={`sec-${s.key}`}>
+            <div class="flex items-baseline gap-3">
+              <span class="text-2xl font-extrabold tabular-nums" style={`color:${theory.accent}`}>
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div>
+                <h2 id={`sec-${s.key}`} class="text-xl font-bold">{s.label}</h2>
+                {s.sub && <p class="text-xs text-text-dim">{s.sub}</p>}
+              </div>
+            </div>
+
+            {s.key !== 'insight' && s.key !== 'controversy' && (
+              <p class="mt-3 text-[15px] leading-8 text-text">{theory.sections[s.key]}</p>
+            )}
+
+            {s.key === 'controversy' && (
+              <div class="mt-3 rounded-r-lg border-l-4 border-charge-pos/60 bg-charge-pos/5 px-4 py-3 text-[15px] leading-8">
+                {theory.sections.controversy}
+              </div>
+            )}
+
+            {s.key === 'core' && theory.formulas.length > 0 && (
+              <div class="mt-5 flex flex-col gap-4">
+                {theory.formulas.map((f) => (
+                  <figure class="rounded-xl border border-line bg-panel px-4 py-4">
+                    <Formula tex={f.tex} display={f.display} />
+                    {f.caption && (
+                      <figcaption class="mt-2 text-center text-[13px] text-text-dim">{f.caption}</figcaption>
+                    )}
+                  </figure>
+                ))}
+              </div>
+            )}
+
+            {s.key === 'insight' && (
+              <blockquote class="mt-3 border-l-4 border-arc-gold bg-panel-2 px-4 py-3 italic text-text">
+                「 {theory.sections.insight} 」
+              </blockquote>
+            )}
+          </section>
+        ))
+      }
+    </article>
+
+    <nav class="mt-14 border-t border-line pt-6 text-sm">
+      <a href={href('theory/errors')} class="text-arc-gold hover:underline">参观「错误理论博物馆」→</a>
+    </nav>
+  </main>
+</BaseLayout>
