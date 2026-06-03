@@ -19,7 +19,7 @@ export const FEATURES: FeatureCard[] = [
     id: 'misunderstood',
     title: '被误解的天才',
     desc: '欧姆被骂了 10 年、法拉第的「场」被讥为玄学——看主流如何忽视后来改变世界的人。',
-    to: 'timeline',
+    to: 'scientists',
   },
   {
     id: 'formulas',

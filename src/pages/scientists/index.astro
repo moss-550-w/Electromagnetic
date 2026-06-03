@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteNav from '../../components/nav/SiteNav.astro';
+import { SCIENTISTS, FORGOTTEN_PIONEERS, FORGOTTEN_INTRO } from '../../data/scientists';
+import { href } from '../../lib/href';
+---
+
+<BaseLayout
+  title="凡人科学家列传 · 电磁学认知革命"
+  description="不做天才神话——展示有缺点、有困惑、会犯错、会被误解的凡人科学家。法拉第、开尔文、麦克斯韦、赫兹,以及被遗忘的先驱。"
+>
+  <SiteNav />
+  <main id="main" class="mx-auto max-w-5xl px-5 pb-24 pt-24">
+    <header class="max-w-2xl">
+      <h1 class="text-4xl font-extrabold md:text-5xl">凡人科学家列传</h1>
+      <p class="mt-4 text-lg text-text-dim">
+        这里没有神。只有
+        <span class="text-arc-gold">有缺点、会犯错、被误解的凡人</span>
+        ——他们和我们一样,只是更坚持、更愿意独立思考。
+      </p>
+    </header>
+
+    <!-- 重点人物 -->
+    <div class="mt-10 grid gap-5 md:grid-cols-2">
+      {
+        SCIENTISTS.map((s) => (
+          <a
+            href={href(`scientists/${s.slug}`)}
+            class="group rounded-2xl border border-line bg-panel p-6 transition hover:border-arc-gold/60 hover:bg-panel-2"
+            style={`border-top:3px solid ${s.accent}`}
+          >
+            <div class="text-xs font-bold" style={`color:${s.accent}`}>{s.life}</div>
+            <h2 class="mt-1 text-xl font-bold group-hover:text-arc-gold">{s.name}</h2>
+            <p class="mt-0.5 text-sm text-text-dim">{s.role}</p>
+            <p class="mt-3 text-sm leading-relaxed text-text-dim">{s.summary}</p>
+          </a>
+        ))
+      }
+    </div>
+
+    <!-- 被遗忘的先驱 -->
+    <section class="mt-14" aria-labelledby="forgotten">
+      <h2 id="forgotten" class="text-2xl font-bold">被遗忘的先驱</h2>
+      <p class="mt-2 max-w-3xl text-sm italic leading-relaxed text-text-dim">「 {FORGOTTEN_INTRO} 」</p>
+
+      <div class="mt-6 grid gap-4 md:grid-cols-2">
+        {
+          FORGOTTEN_PIONEERS.map((p) => (
+            <article class="rounded-xl border border-line bg-panel/60 p-5" style="border-left:3px solid #64748B">
+              <h3 class="text-base font-bold text-text">
+                {p.name} <span class="ml-1 text-xs font-normal text-text-dim">{p.life}</span>
+              </h3>
+              <p class="mt-2 text-sm leading-7 text-text">{p.contribution}</p>
+              <p class="mt-2 text-[13px] leading-7 text-text-dim">{p.fate}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+  </main>
+</BaseLayout>
