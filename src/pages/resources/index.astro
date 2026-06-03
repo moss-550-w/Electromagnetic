@@ -146,6 +146,16 @@ import {
               </div>
               <p class="mt-0.5 text-xs text-text-dim">{p.by}</p>
               <p class="mt-2 text-sm leading-7 text-text-dim">{p.desc}</p>
+              {p.url && (
+                <a
+                  href={p.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="mt-3 inline-block text-sm font-semibold text-arc-gold hover:underline"
+                >
+                  查看原文 →
+                </a>
+              )}
             </li>
           ))
         }
@@ -156,7 +166,7 @@ import {
     <section id="experiments" class="mt-14 scroll-mt-24" aria-labelledby="exp-title">
       <h2 id="exp-title" class="text-2xl font-bold">实验复刻指南</h2>
       <p class="mt-2 text-sm text-text-dim">
-        亲手重现历史上的关键瞬间——五个在家就能做的简单电磁学实验。
+        亲手重现历史上的关键瞬间——十个在家就能做的简单电磁学实验,顺着时间线从静电到电磁感应。
       </p>
       <div class="mt-5 grid gap-4 md:grid-cols-2">
         {

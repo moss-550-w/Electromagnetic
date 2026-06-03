@@ -22,22 +22,25 @@ export interface ResourceItem {
 /** 视频推荐 */
 export const VIDEOS: ResourceItem[] = [
   {
-    title: '长河劫·电磁学系列',
-    by: 'B 站科普',
-    desc: '以科学史的曲折性为线索,串起从泰勒斯到麦克斯韦的电磁学认知革命——本站叙事的灵感来源之一。',
+    title: '长河劫·电磁学史系列',
+    by: '长河劫(科学技术史 UP 主)',
+    desc: '以科学史的曲折性为线索,串起从泰勒斯到麦克斯韦的电磁学认知革命——本站叙事的灵感来源之一。主页「科学技术史」合集内含「电磁学史」子合集。',
+    url: 'https://space.bilibili.com/35868098',
     tag: '科普系列',
   },
   {
     title: 'BBC《电的故事》(Shock and Awe: The Story of Electricity)',
-    by: 'BBC / Jim Al-Khalili',
-    desc: '三集纪录片,从静电火花到电网文明,兼顾史实与人物,画面与叙事俱佳。',
+    by: 'BBC Four / Jim Al-Khalili',
+    desc: '2011 年三集纪录片,从静电火花到电网文明,兼顾史实与人物。链接为维基条目,可查分集梗概与观看渠道。',
+    url: 'https://en.wikipedia.org/wiki/Shock_and_Awe:_The_Story_of_Electricity',
     tag: '纪录片',
   },
   {
-    title: '费曼物理学讲义·电磁学篇',
+    title: '费曼物理学讲义·第二卷(电磁学)',
     by: 'Richard Feynman / Caltech',
-    desc: '费曼对「场」与麦克斯韦方程组的讲解,把抽象概念讲得直观可感,适合进阶爱好者。',
-    tag: '讲座',
+    desc: '费曼对「场」与麦克斯韦方程组的讲解,把抽象概念讲得直观可感。Caltech 官方免费在线版,适合进阶爱好者。',
+    url: 'https://www.feynmanlectures.caltech.edu/II_toc.html',
+    tag: '讲义',
   },
 ];
 
@@ -74,19 +77,22 @@ export const PAPERS: ResourceItem[] = [
   {
     title: 'A Dynamical Theory of the Electromagnetic Field (1865)',
     by: 'J. C. Maxwell',
-    desc: '麦克斯韦奠定电磁场理论、预言电磁波的原始论文。皇家学会哲学汇刊原文。',
+    desc: '麦克斯韦奠定电磁场理论、预言电磁波的原始论文。链接为皇家学会《哲学汇刊》原刊扫描件(Internet Archive)。',
+    url: 'https://archive.org/details/philtrans00041514',
     tag: '原始论文',
   },
   {
     title: 'Experimental Researches in Electricity',
     by: 'M. Faraday',
-    desc: '法拉第历时数十年的实验研究合集,电磁感应、力线概念皆出于此。',
+    desc: '法拉第历时数十年的实验研究合集,电磁感应、力线概念皆出于此。链接为 Project Gutenberg 全文(第一卷)。',
+    url: 'https://www.gutenberg.org/ebooks/14986',
     tag: '实验笔记',
   },
   {
     title: 'Die galvanische Kette, mathematisch bearbeitet (1827)',
     by: 'G. S. Ohm',
-    desc: '欧姆定律的原始专著——发表后被冷落十年,如今是每本电学教科书的开篇。',
+    desc: '欧姆定律的原始专著——发表后被冷落十年,如今是每本电学教科书的开篇。链接为 1891 年英译本(Internet Archive)。',
+    url: 'https://archive.org/details/ohm-1827-galvanic-circuit-investigated-mathematically',
     tag: '原始专著',
   },
 ];
@@ -122,6 +128,19 @@ export const EXPERIMENTS: Experiment[] = [
     principle: '摩擦使物体带上静电,带电体对轻小物体产生静电吸引——这正是「电(elektron=琥珀)」一词的由来。',
   },
   {
+    id: 'balloon',
+    title: '气球贴墙与怒发冲冠',
+    origin: '杜菲 / 富兰克林,18 世纪',
+    level: '简单',
+    materials: ['吹胀的气球', '干燥的头发', '一面墙'],
+    steps: [
+      '把气球在头发上来回摩擦十几秒,头发会丝丝竖起、追着气球。',
+      '将气球轻压到墙上后松手,气球会「粘」在墙面上不掉。',
+      '再让两个同样摩擦过的气球互相靠近,会彼此推开。',
+    ],
+    principle: '摩擦让气球带上负电:同种电荷相斥(两气球、根根竖起的头发),异种相吸(带电气球吸住中性的墙)。富兰克林正是用「正/负」来命名这两种电荷。',
+  },
+  {
     id: 'can',
     title: '易拉罐静电赛跑',
     origin: '静电时代',
@@ -133,6 +152,33 @@ export const EXPERIMENTS: Experiment[] = [
       '把气球靠近(不接触)易拉罐,罐子会被「隔空」吸着滚动。',
     ],
     principle: '带电气球使易拉罐近端感应出异号电荷(静电感应),异性相吸,于是罐子追着气球跑。',
+  },
+  {
+    id: 'electroscope',
+    title: '自制验电器',
+    origin: '静电时代:检验电荷的有无',
+    level: '中等',
+    materials: ['透明玻璃瓶', '一段硬铜丝', '两小片铝箔', '软木塞或橡皮泥'],
+    steps: [
+      '铜丝穿过瓶塞,上端弯成小钩或小球,下端挂上两片轻薄铝箔,使其自然贴合。',
+      '把装置封进瓶口,让铝箔悬在瓶内避风。',
+      '用摩擦带电的尺子或气球靠近顶端,观察两片铝箔张开;移走后又慢慢闭合。',
+    ],
+    principle: '带电体通过静电感应让两片铝箔带上同种电荷,同性相斥便张开——这是历史上检测「带电与否、电量多少」最早的定量仪器。',
+  },
+  {
+    id: 'lemon-battery',
+    title: '柠檬电池点亮 LED',
+    origin: '伏打,1800 年',
+    level: '中等',
+    materials: ['3–4 个柠檬(或盐水杯)', '铜片或铜币', '镀锌钉(作锌电极)', '导线若干', '一只 LED 或万用表'],
+    steps: [
+      '每个柠檬各插入一片铜和一根锌钉,两者不要相碰。',
+      '用导线把「前一个柠檬的铜」接「后一个柠檬的锌」,逐个串联。',
+      '两端接到 LED(长脚接铜一侧),或用万用表量电压,观察微弱发光与读数。',
+    ],
+    principle: '两种金属在酸性电解质中发生氧化还原反应,持续输出电压。这正是伏打电堆的家庭版——人类第一个「稳定持续电源」的原理。',
+    safety: '电压电流极低,本身安全;但插过金属的柠檬已被污染,切勿食用。',
   },
   {
     id: 'oersted',
@@ -149,6 +195,20 @@ export const EXPERIMENTS: Experiment[] = [
     safety: '只可短暂通电(数秒),导线直接接电池会发热,切勿长时间短路。',
   },
   {
+    id: 'electromagnet',
+    title: '铁钉电磁铁吸回形针',
+    origin: '斯特金,1824 年(电生磁的应用)',
+    level: '简单',
+    materials: ['一枚大铁钉', '带绝缘漆的细铜线', '1.5V 电池', '一把回形针'],
+    steps: [
+      '把铜线沿同一方向密密绕在铁钉上几十圈,两端各留出一段。',
+      '将铜线两端接到电池正负极。',
+      '用钉尖去靠近回形针——通电时吸起一串,断电就纷纷落下。',
+    ],
+    principle: '通电螺线管产生磁场,铁芯把磁性放大千百倍。奥斯特「电生磁」由此变成可控的工具,成为电铃、继电器、电动机的共同基础。',
+    safety: '通电时铜线与电池会发热,只作短暂通电,避免长时间短路。',
+  },
+  {
     id: 'induction',
     title: '法拉第电磁感应:动磁生电',
     origin: '法拉第,1831 年',
@@ -160,6 +220,20 @@ export const EXPERIMENTS: Experiment[] = [
       '磁铁静止时无电流;快速抽出时指针向反方向摆动。',
     ],
     principle: '只有「变化」的磁场才能生电:磁通量随时间变化在线圈中感应出电动势——发电机的原理就在这一插一拔之间。',
+  },
+  {
+    id: 'lenz-tube',
+    title: '楞次定律:铜管里缓降的磁铁',
+    origin: '楞次,1834 年',
+    level: '中等',
+    materials: ['一段铜管或铝管(非铁磁)', '一颗能穿过管子的强力钕磁铁', '一个同尺寸的非磁性小物(作对照)'],
+    steps: [
+      '先让非磁性小物从竖直的管中落下,几乎瞬间到底。',
+      '再让钕磁铁从同一管口落下。',
+      '对比观察:磁铁像「慢动作」般缓缓下沉,耗时长得多。',
+    ],
+    principle: '磁铁下落使管壁磁通量不断变化,在管壁感应出涡电流;涡流磁场反过来阻碍磁铁运动(楞次定律:感应电流总是反抗引起它的变化)——这就是电磁阻尼。',
+    safety: '钕磁铁吸力很强,注意别夹到手指,并远离手机、磁卡等。',
   },
   {
     id: 'motor',
