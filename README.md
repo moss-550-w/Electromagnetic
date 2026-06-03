@@ -7,6 +7,8 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38bdf8?logo=tailwindcss)](https://tailwindcss.com)
 [![License](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 
+**线上地址：** <https://moss-550-w.github.io/Electromagnetic/>
+
 ## 核心定位
 
 - **真实优先**：完整呈现争议、错误、偶然，不神化科学家
