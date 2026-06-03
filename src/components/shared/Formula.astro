@@ -1,0 +1,35 @@
+---
+// KaTeX 公式:构建时渲染为静态 HTML(无运行时 JS,CLAUDE.md「KaTeX 构建时」)。
+// katex 的 CSS 在 frontmatter import —— Astro 只把它注入「用到本组件的页面」,
+// 故首页/时间线等无公式页不会加载 katex 样式。
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
+
+interface Props {
+  /** LaTeX 源码,例:"\\nabla \\cdot \\mathbf{E} = \\dfrac{\\rho}{\\varepsilon_0}" */
+  tex: string;
+  /** true=块级居中公式;false=行内 */
+  display?: boolean;
+  /** 无障碍朗读文本,缺省用 tex 原文 */
+  label?: string;
+}
+
+const { tex, display = false, label } = Astro.props;
+const html = katex.renderToString(tex, {
+  displayMode: display,
+  throwOnError: false, // 公式写错时降级显示红色源码,不中断构建
+});
+---
+
+<span
+  class={display ? 'my-4 block overflow-x-auto text-center' : 'inline-block align-middle'}
+  role="math"
+  aria-label={label ?? tex}
+  set:html={html}
+/>
+
+<!--
+  用法示例(M2 麦克斯韦方程组等):
+  <Formula tex="\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\varepsilon_0 \\dfrac{\\partial \\mathbf{E}}{\\partial t}" display />
+  <Formula tex="U = IR" />
+-->
