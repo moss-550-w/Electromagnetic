@@ -10,8 +10,11 @@ interface Props {
   title: string;
   description: string;
   lang?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  jsonLd?: object | object[];
 }
-const { title, description, lang = 'zh-CN' } = Astro.props;
+const { title, description, lang = 'zh-CN', image, type, jsonLd } = Astro.props;
 ---
 
 <!doctype html>
@@ -20,7 +23,7 @@ const { title, description, lang = 'zh-CN' } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href={asset('favicon.svg')} />
-    <Seo title={title} description={description} />
+    <Seo title={title} description={description} image={image} type={type} jsonLd={jsonLd} />
     <slot name="head" />
   </head>
   <body class="bg-bg text-text font-sans antialiased">

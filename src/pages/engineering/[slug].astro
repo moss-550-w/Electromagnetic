@@ -4,6 +4,7 @@ import SiteNav from '../../components/nav/SiteNav.astro';
 import { ENGINEERING_CASES } from '../../data/engineering';
 import { getTheory } from '../../data/theories';
 import { href } from '../../lib/href';
+import { articleSchema, breadcrumbSchema } from '../../lib/schema';
 
 export function getStaticPaths() {
   return ENGINEERING_CASES.map((c) => ({ params: { slug: c.slug }, props: { item: c } }));
@@ -18,9 +19,26 @@ const STAGES = [
   { key: 'modern', label: '现代应用' },
   { key: 'future', label: '未来展望' },
 ] as const;
+
+const origin = Astro.site;
+const abs = (p: string): string => (origin ? new URL(p, origin).href : p);
+const pageUrl = abs(Astro.url.pathname);
+const jsonLd = [
+  articleSchema({
+    headline: item.name,
+    description: item.summary,
+    url: pageUrl,
+    section: '工程应用史',
+  }),
+  breadcrumbSchema([
+    { name: '首页', url: abs(import.meta.env.BASE_URL) },
+    { name: '工程应用史', url: abs(href('engineering')) },
+    { name: item.name, url: pageUrl },
+  ]),
+];
 ---
 
-<BaseLayout title={`${item.name} · 工程应用史`} description={item.summary}>
+<BaseLayout title={`${item.name} · 工程应用史`} description={item.summary} type="article" jsonLd={jsonLd}>
   <SiteNav />
   <main id="main" class="mx-auto max-w-3xl px-5 pb-24 pt-24">
     <a href={href('engineering')} class="text-sm text-text-dim transition hover:text-arc-gold">← 工程应用史</a>

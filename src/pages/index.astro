@@ -6,11 +6,20 @@ import TimelineThumb from '../components/home/TimelineThumb.astro';
 import FeatureCards from '../components/home/FeatureCards.astro';
 import InsightTicker from '../components/home/InsightTicker.astro';
 import { href } from '../lib/href';
+import { websiteSchema } from '../lib/schema';
+
+const DESCRIPTION =
+  '从琥珀摩擦到 5G 通信。以科学史的曲折性为灵魂,呈现电磁学发现背后的争议、错误与偶然——普通用户看故事,爱好者看细节,专业用户看原始文献。';
+const siteUrl = Astro.site
+  ? new URL(import.meta.env.BASE_URL, Astro.site).href
+  : import.meta.env.BASE_URL;
+const jsonLd = websiteSchema({ url: siteUrl, description: DESCRIPTION });
 ---
 
 <BaseLayout
   title="电磁学:一场跨越三千年的认知革命"
-  description="从琥珀摩擦到 5G 通信。以科学史的曲折性为灵魂,呈现电磁学发现背后的争议、错误与偶然——普通用户看故事,爱好者看细节,专业用户看原始文献。"
+  description={DESCRIPTION}
+  jsonLd={jsonLd}
 >
   <IntroAnimation />
   <SiteNav />

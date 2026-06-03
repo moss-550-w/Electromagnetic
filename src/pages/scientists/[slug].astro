@@ -4,6 +4,7 @@ import SiteNav from '../../components/nav/SiteNav.astro';
 import { SCIENTISTS } from '../../data/scientists';
 import { getTheory } from '../../data/theories';
 import { href } from '../../lib/href';
+import { articleSchema, breadcrumbSchema } from '../../lib/schema';
 
 export function getStaticPaths() {
   return SCIENTISTS.map((s) => ({ params: { slug: s.slug }, props: { scientist: s } }));
@@ -19,9 +20,26 @@ const SECTIONS = [
   { key: 'controversy', label: '他们的争议', sub: '当时的人如何评价' },
   { key: 'legacy', label: '留给后世的启示', sub: '' },
 ] as const;
+
+const origin = Astro.site;
+const abs = (p: string): string => (origin ? new URL(p, origin).href : p);
+const pageUrl = abs(Astro.url.pathname);
+const jsonLd = [
+  articleSchema({
+    headline: scientist.name,
+    description: scientist.summary,
+    url: pageUrl,
+    section: '凡人科学家列传',
+  }),
+  breadcrumbSchema([
+    { name: '首页', url: abs(import.meta.env.BASE_URL) },
+    { name: '凡人科学家列传', url: abs(href('scientists')) },
+    { name: scientist.name, url: pageUrl },
+  ]),
+];
 ---
 
-<BaseLayout title={`${scientist.name} · 凡人科学家列传`} description={scientist.summary}>
+<BaseLayout title={`${scientist.name} · 凡人科学家列传`} description={scientist.summary} type="article" jsonLd={jsonLd}>
   <SiteNav />
   <main id="main" class="mx-auto max-w-3xl px-5 pb-24 pt-24">
     <a href={href('scientists')} class="text-sm text-text-dim transition hover:text-arc-gold">← 凡人科学家列传</a>
