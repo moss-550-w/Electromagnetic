@@ -31,7 +31,7 @@ export const FEATURES: FeatureCard[] = [
     id: 'without-em',
     title: '如果没有电磁学',
     desc: '禁用一个发现,世界会怎样?没有电磁感应、没有电磁波的现代生活脑洞模拟。',
-    upcoming: true,
+    to: 'engineering',
   },
 ];
 

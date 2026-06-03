@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteNav from '../../components/nav/SiteNav.astro';
+import { ENGINEERING_CASES } from '../../data/engineering';
+import { getTheory } from '../../data/theories';
+import { href } from '../../lib/href';
+
+export function getStaticPaths() {
+  return ENGINEERING_CASES.map((c) => ({ params: { slug: c.slug }, props: { item: c } }));
+}
+const { item } = Astro.props;
+const theory = item.theorySlug ? getTheory(item.theorySlug) : undefined;
+
+const STAGES = [
+  { key: 'theory', label: '理论源头' },
+  { key: 'breakthrough', label: '技术突破' },
+  { key: 'industry', label: '产业革命' },
+  { key: 'modern', label: '现代应用' },
+  { key: 'future', label: '未来展望' },
+] as const;
+---
+
+<BaseLayout title={`${item.name} · 工程应用史`} description={item.summary}>
+  <SiteNav />
+  <main id="main" class="mx-auto max-w-3xl px-5 pb-24 pt-24">
+    <a href={href('engineering')} class="text-sm text-text-dim transition hover:text-arc-gold">← 工程应用史</a>
+
+    <header class="mt-4 border-b border-line pb-8">
+      <h1 class="text-4xl font-extrabold leading-tight">{item.name}</h1>
+      <p class="mt-1 text-lg text-text-dim">{item.subtitle}</p>
+
+      <!-- 链条:理论 → 发明 → 产业 → 生活 -->
+      <div class="mt-5 flex flex-wrap items-center gap-2">
+        {
+          item.chain.map((node, i) => (
+            <span class="inline-flex items-center gap-2">
+              <span class="rounded-full bg-panel-2 px-3 py-1 text-sm text-text">{node}</span>
+              {i < item.chain.length - 1 && <span class="font-bold text-arc-gold">→</span>}
+            </span>
+          ))
+        }
+      </div>
+
+      <p class="mt-5 rounded-xl border border-line bg-panel p-4 leading-relaxed">
+        <span class="font-semibold text-arc-gold">核心结论:</span>{item.summary}
+      </p>
+    </header>
+
+    <article class="mt-10 flex flex-col gap-10">
+      {
+        STAGES.map((s, i) => (
+          <section aria-labelledby={`stage-${s.key}`}>
+            <div class="flex items-baseline gap-3">
+              <span class="text-2xl font-extrabold tabular-nums" style={`color:${item.accent}`}>
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h2 id={`stage-${s.key}`} class="text-xl font-bold">{s.label}</h2>
+            </div>
+            <p class="mt-3 text-[15px] leading-8 text-text">{item.stages[s.key]}</p>
+          </section>
+        ))
+      }
+
+      <section aria-labelledby="stage-insight">
+        <div class="flex items-baseline gap-3">
+          <span class="text-2xl font-extrabold tabular-nums" style={`color:${item.accent}`}>06</span>
+          <h2 id="stage-insight" class="text-xl font-bold">科学启示</h2>
+        </div>
+        <blockquote class="mt-3 border-l-4 border-arc-gold bg-panel-2 px-4 py-3 italic text-text">
+          「 {item.insight} 」
+        </blockquote>
+      </section>
+    </article>
+
+    {
+      theory && (
+        <nav class="mt-10 border-t border-line pt-6 text-sm">
+          <a href={href(`theory/${theory.slug}`)} class="text-arc-gold hover:underline">
+            理论源头:{theory.name} →
+          </a>
+        </nav>
+      )
+    }
+  </main>
+</BaseLayout>
