@@ -5,8 +5,8 @@ import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 
 // GitHub Pages:project pages 的 base 必须等于仓库名。
-// 用环境变量收敛:本地 dev 默认 '/';CI/部署时设 BASE_PATH=/<仓库名>、SITE_URL=https://<user>.github.io
-const SITE = process.env.SITE_URL ?? 'https://example.github.io';
+// 用环境变量收敛:本地 dev 默认 '/';CI/部署时设 BASE_PATH=/Electromagnetic、SITE_URL=https://moss-550-w.github.io
+const SITE = process.env.SITE_URL ?? 'https://moss-550-w.github.io';
 const BASE = process.env.BASE_PATH ?? '/';
 
 export default defineConfig({
