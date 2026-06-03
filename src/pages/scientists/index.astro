@@ -3,11 +3,28 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SiteNav from '../../components/nav/SiteNav.astro';
 import { SCIENTISTS, FORGOTTEN_PIONEERS, FORGOTTEN_INTRO } from '../../data/scientists';
 import { href } from '../../lib/href';
+import { collectionPageSchema, breadcrumbSchema } from '../../lib/schema';
+
+const origin = Astro.site;
+const abs = (p: string): string => (origin ? new URL(p, origin).href : p);
+const pageUrl = abs(Astro.url.pathname);
+const jsonLd = [
+  collectionPageSchema({
+    name: '凡人科学家列传',
+    description: '不做天才神话——展示有缺点、有困惑、会犯错、会被误解的凡人科学家。法拉第、开尔文、麦克斯韦、赫兹,以及被遗忘的先驱。',
+    url: pageUrl,
+  }),
+  breadcrumbSchema([
+    { name: '首页', url: abs(import.meta.env.BASE_URL) },
+    { name: '凡人科学家列传', url: pageUrl },
+  ]),
+];
 ---
 
 <BaseLayout
   title="凡人科学家列传 · 电磁学认知革命"
   description="不做天才神话——展示有缺点、有困惑、会犯错、会被误解的凡人科学家。法拉第、开尔文、麦克斯韦、赫兹,以及被遗忘的先驱。"
+  jsonLd={jsonLd}
 >
   <SiteNav />
   <main id="main" class="mx-auto max-w-5xl px-5 pb-24 pt-24">

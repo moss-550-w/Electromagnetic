@@ -3,11 +3,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteNav from '../components/nav/SiteNav.astro';
 import TimelineApp from '../components/timeline/TimelineApp.tsx';
 import { ERAS } from '../data/timeline';
+import { webPageSchema } from '../lib/schema';
+
+const origin = Astro.site;
+const abs = (p: string): string => (origin ? new URL(p, origin).href : p);
+const pageUrl = abs(Astro.url.pathname);
+const jsonLd = webPageSchema({
+  name: '交互式电磁学发展时间线',
+  description: '5 个时代、16 个真实史实节点。从泰勒斯到 5G,垂直沉浸式叙事 + 详情常驻面板,呈现最颠覆认知的历史真相。',
+  url: pageUrl,
+});
 ---
 
 <BaseLayout
   title="交互式电磁学发展时间线 · 三千年认知革命"
   description="5 个时代、16 个真实史实节点。垂直沉浸式叙事 + 详情常驻面板。每个节点呈现快速结论、完整经过与科学启示,并以红色标注最颠覆认知的历史真相。"
+  jsonLd={jsonLd}
 >
   <SiteNav />
   <main id="main">

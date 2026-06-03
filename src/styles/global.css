@@ -3,9 +3,25 @@
 @tailwind utilities;
 
 /* ============================================================
-   全局基底
+   设计令牌(CSS 自定义属性,与 tailwind.config 保持同步)
+   用于内联 style 或无法使用 Tailwind 工具类的场景。
    ============================================================ */
-:root { color-scheme: dark; }
+:root {
+  --color-deep-space:  #0F172A;
+  --color-arc-gold:    #F59E0B;
+  --color-magnet-gray: #64748B;
+  --color-charge-pos:  #EF4444;
+  --color-charge-neg:  #3B82F6;
+
+  --color-bg:       #0B1120;
+  --color-panel:    #111c34;
+  --color-panel-2:  #16223f;
+  --color-line:     #1e2c4a;
+  --color-text:     #E2E8F0;
+  --color-text-dim: #94A3B8;
+
+  color-scheme: dark;
+}
 html { scroll-behavior: smooth; }
 html, body { margin: 0; padding: 0; }
 body { -webkit-font-smoothing: antialiased; }

@@ -36,4 +36,4 @@ const ldJson = (o: object) => JSON.stringify(o).replace(/</g, '\\u003c');
 {ogImage && <meta property="og:image" content={ogImage} />}
 <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
 {ogImage && <meta name="twitter:image" content={ogImage} />}
-{schemas.map((s) => <script type="application/ld+json" set:html={ldJson(s)} />)}
+{schemas.map((s) => <script type="application/ld+json" is:inline set:html={ldJson(s)} />)}

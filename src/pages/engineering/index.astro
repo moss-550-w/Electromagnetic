@@ -5,11 +5,28 @@ import WithoutEM from '../../components/engineering/WithoutEM.tsx';
 import { ENGINEERING_CASES } from '../../data/engineering';
 import { DISABLE_SCENARIOS, DISABLE_INTRO } from '../../data/disable';
 import { href } from '../../lib/href';
+import { collectionPageSchema, breadcrumbSchema } from '../../lib/schema';
+
+const origin = Astro.site;
+const abs = (p: string): string => (origin ? new URL(p, origin).href : p);
+const pageUrl = abs(Astro.url.pathname);
+const jsonLd = [
+  collectionPageSchema({
+    name: '从公式到世界:工程应用史',
+    description: '一个理论→一个发明→一个产业→改变人类生活。发电机与电网、无线电与通信的完整链条,以及「如果没有电磁学」互动模拟器。',
+    url: pageUrl,
+  }),
+  breadcrumbSchema([
+    { name: '首页', url: abs(import.meta.env.BASE_URL) },
+    { name: '工程应用史', url: pageUrl },
+  ]),
+];
 ---
 
 <BaseLayout
   title="从公式到世界:工程应用史 · 电磁学"
   description="一个理论→一个发明→一个产业→改变人类生活。发电机与电网、无线电与通信的完整链条,以及「如果没有电磁学」互动模拟器。"
+  jsonLd={jsonLd}
 >
   <SiteNav />
   <main id="main" class="mx-auto max-w-5xl px-5 pb-24 pt-24">

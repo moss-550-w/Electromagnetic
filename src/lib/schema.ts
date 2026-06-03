@@ -49,6 +49,44 @@ export function articleSchema(opts: {
   };
 }
 
+/** 列表/板块页 CollectionPage schema(理论列表、科学家列表等)。 */
+export function collectionPageSchema(opts: {
+  name: string;
+  description: string;
+  url: string;
+  section?: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: opts.name,
+    description: opts.description,
+    url: opts.url,
+    mainEntityOfPage: opts.url,
+    inLanguage: 'zh-CN',
+    isAccessibleForFree: true,
+    ...(opts.section ? { about: opts.section } : {}),
+  };
+}
+
+/** 通用 WebPage schema(单页无内容分层时使用:timeline、errors、insights、resources)。 */
+export function webPageSchema(opts: {
+  name: string;
+  description: string;
+  url: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: opts.name,
+    description: opts.description,
+    url: opts.url,
+    mainEntityOfPage: opts.url,
+    inLanguage: 'zh-CN',
+    isAccessibleForFree: true,
+  };
+}
+
 /** 面包屑 BreadcrumbList(首页 → 列表 → 详情)。items 顺序即层级,url 为绝对地址。 */
 export function breadcrumbSchema(items: Array<{ name: string; url: string }>) {
   return {

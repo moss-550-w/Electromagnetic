@@ -105,9 +105,11 @@ M7 打磨上线 ── 收尾
 
 ## 技术债 / 待办清单
 
-- [ ] M0-P0:`tailwind.config.mjs` 设计令牌(**最高优先**)
-- [ ] Inter 字体 self-host
-- [ ] KaTeX 接入(公式板块前置)
+- [x] M0-P0:`tailwind.config.mjs` 设计令牌(**最高优先**)
+- [x] Inter 字体 self-host
+- [x] KaTeX 接入(公式板块前置)
+- [x] 全站 JSON-LD 覆盖(12 页:WebSite/Article/CollectionPage/WebPage + BreadcrumbList)
+- [x] CSS 自定义属性同步(`--color-*` → `global.css`,与 Tailwind 令牌一致)
+- [x] 删除 `prototypes/timeline/`
 - [ ] GitHub Actions 部署 + 确认仓库名→`BASE_PATH`
-- [ ] 删除 `prototypes/timeline/`
 - [ ] `src/content/` 集合化(板块内容增多后,从 `src/data` 迁到 Astro Content Collections,获得类型校验与 Markdown 支持)
