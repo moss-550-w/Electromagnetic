@@ -124,7 +124,10 @@ export const ERAS: Era[] = [
         truth: '发表后被骂了整整10年,被同行斥为「纯粹的数学虚构」,欧姆一度丢了教职。',
         detail: '乔治·欧姆给出电压、电流、电阻的简洁关系,却因当时德国学界的偏见而长期被压制,晚年才获得承认。',
         insight: '真理需要时间来证明——被冷落,不等于错误。',
-        links: [{ label: '被遗忘的先驱', to: 'scientists#forgotten' }],
+        links: [
+          { label: '理论:欧姆定律', to: 'theory/ohm-law' },
+          { label: '被遗忘的先驱', to: 'scientists#forgotten' },
+        ],
       },
     ],
   },
@@ -147,6 +150,10 @@ export const ERAS: Era[] = [
         truth: '奥斯特发现后仅几周,安培就把它数学化——「电动力学」一词由此而来。',
         detail: '安培迅速用数学描述了电流之间、电流与磁的相互作用,把定性发现变成定量理论。',
         insight: '快速跟进 + 数学化,是把发现变成学科的关键一步。',
+        links: [
+          { label: '理论:安培定律', to: 'theory/ampere-law' },
+          { label: '理论:毕奥–萨伐尔定律', to: 'theory/biot-savart' },
+        ],
       },
       {
         year: '1831', person: '法拉第', title: '电磁感应:动磁生电', key: true,

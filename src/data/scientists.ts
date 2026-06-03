@@ -139,6 +139,8 @@ export interface ForgottenPioneer {
   life: string;
   contribution: string;
   fate: string;
+  /** 关联理论页 slug(若该先驱有独立理论专题)*/
+  theorySlug?: string;
 }
 
 export const FORGOTTEN_INTRO =
@@ -156,6 +158,7 @@ export const FORGOTTEN_PIONEERS: ForgottenPioneer[] = [
     life: '1789 – 1854',
     contribution: '提出欧姆定律,给出电压、电流、电阻的简洁关系。',
     fate: '发表后被德国学界斥为「纯粹的数学虚构」,压制近 10 年,一度愤而辞去教职,晚年才获认可。',
+    theorySlug: 'ohm-law',
   },
   {
     name: '海因里希·楞次',
@@ -168,5 +171,6 @@ export const FORGOTTEN_PIONEERS: ForgottenPioneer[] = [
     life: '1820',
     contribution: '提出毕奥–萨伐尔定律,由电流分布计算其产生的磁场。',
     fate: '公式被一代代学生反复使用,两位作者本人却鲜被提及。',
+    theorySlug: 'biot-savart',
   },
 ];
