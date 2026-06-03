@@ -14,5 +14,6 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'ignore',
   // 所有站内链接一律走 src/lib/href.ts 的 href()/asset(),自动带 base 前缀,杜绝子路径死链。
-  integrations: [react(), tailwind()],
+  // applyBaseStyles:false —— Tailwind 基础层由 src/styles/global.css 的 @tailwind 指令唯一注入,避免重复
+  integrations: [react(), tailwind({ applyBaseStyles: false })],
 });
