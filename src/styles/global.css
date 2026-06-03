@@ -1,51 +1,26 @@
-@import "tailwindcss";
-
-/* ============================================================
-   设计令牌(单一可信源)— 对应 CLAUDE.md 第四节
-   Tailwind v4 @theme:同时生成工具类(bg-*/text-*/border-*/font-*)
-   与同名 CSS 变量(var(--color-*)),组件禁止再写十六进制魔法值。
-   ============================================================ */
-@theme {
-  /* 主色 */
-  --color-deep-space: #0F172A;  /* 深空蓝 — 理性/宇宙 */
-  --color-arc-gold: #F59E0B;    /* 电弧金 — 火花/高亮(仅核心结论与关键节点)*/
-  --color-magnet-gray: #64748B; /* 磁石灰 — 磁的沉稳 */
-  --color-charge-pos: #EF4444;  /* 正电红 — 正极 / 「历史真相」标 */
-  --color-charge-neg: #3B82F6;  /* 负电蓝 — 负极 */
-
-  /* 派生背景 / 文字(深色基调,取自时间线原型)*/
-  --color-bg: #0B1120;
-  --color-panel: #111c34;
-  --color-panel-2: #16223f;
-  --color-line: #1e2c4a;
-  --color-text: #E2E8F0;
-  --color-text-dim: #94A3B8;
-
-  /* 字体族 */
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-math: "Latin Modern Math", "STIX Two Math", serif; /* 公式族,KaTeX 接入时启用 */
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* ============================================================
    全局基底
    ============================================================ */
 :root { color-scheme: dark; }
 html { scroll-behavior: smooth; }
-html, body { margin: 0; padding: 0; background: var(--color-bg); color: var(--color-text); }
-body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; padding: 0; }
+body { -webkit-font-smoothing: antialiased; }
 
 /* 键盘可达:跳到主内容 */
 .skip-link {
   position: absolute; left: -9999px; top: 0; z-index: 100;
-  background: var(--color-arc-gold); color: #000; padding: 10px 16px; border-radius: 0 0 8px 0; font-weight: 700;
 }
 .skip-link:focus { left: 0; }
 
 /* 可见 focus ring,勿移除 */
-:focus-visible { outline: 2px solid var(--color-arc-gold); outline-offset: 2px; }
+:focus-visible { outline: 2px solid #F59E0B; outline-offset: 2px; }
 
 /* ============================================================
-   a11y:尊重「减少动态效果」— CLAUDE.md 六/七节硬要求
+   a11y:尊重「减少动态效果」
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
