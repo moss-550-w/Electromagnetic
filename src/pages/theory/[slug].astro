@@ -2,16 +2,18 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SiteNav from '../../components/nav/SiteNav.astro';
 import Formula from '../../components/shared/Formula.astro';
-import { THEORIES } from '../../data/theories';
+import { getCollection } from 'astro:content';
 import { THEORY_ANALOGIES } from '../../data/analogies';
 import { href } from '../../lib/href';
 import { articleSchema, breadcrumbSchema } from '../../lib/schema';
 
-export function getStaticPaths() {
-  return THEORIES.map((t) => ({ params: { slug: t.slug }, props: { theory: t } }));
+export async function getStaticPaths() {
+  const theories = await getCollection('theories');
+  return theories.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
 }
-const { theory } = Astro.props;
-const analogy = THEORY_ANALOGIES[theory.slug];
+const { entry } = Astro.props;
+const theory = entry.data;
+const analogy = THEORY_ANALOGIES[entry.id];
 
 // 7 段固定结构(design.md 3.1)。heading 在模板,body 在数据。
 const SECTIONS = [

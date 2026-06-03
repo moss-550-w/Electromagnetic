@@ -16,30 +16,30 @@
 
 ## 横切原则(每个里程碑都遵守)
 
-| 维度 | 要求 | 来源 |
-|------|------|------|
-| 科学严谨 | 史料可溯源;争议并陈;脑洞与史实在 UI 上明确区分 | CLAUDE.md 八 |
-| 设计一致 | 只用设计令牌,禁魔法值;金色仅高亮核心结论 | CLAUDE.md 四 |
-| 内容/表现分离 | 文案进 `src/data`(或后续 `src/content`),组件只渲染 | CLAUDE.md 三 |
-| a11y / SEO | 每页独立 SEO;键盘可达;`prefers-reduced-motion`;图片 alt | CLAUDE.md 六 |
-| 复用优先 | `LayeredCard` / `BaseLayout` / `Seo` / 待建 `Formula` 跨板块共用 | CLAUDE.md 五 |
+| 维度         | 要求                                                        | 来源          |
+| ---------- | --------------------------------------------------------- | ----------- |
+| 科学严谨       | 史料可溯源;争议并陈;脑洞与史实在 UI 上明确区分                                | CLAUDE.md 八 |
+| 设计一致       | 只用设计令牌,禁魔法值;金色仅高亮核心结论                                     | CLAUDE.md 四 |
+| 内容/表现分离    | 文案进 `src/data`(或后续 `src/content`),组件只渲染                   | CLAUDE.md 三 |
+| a11y / SEO | 每页独立 SEO;键盘可达;`prefers-reduced-motion`;图片 alt             | CLAUDE.md 六 |
+| 复用优先       | `LayeredCard` / `BaseLayout` / `Seo` / 待建 `Formula` 跨板块共用 | CLAUDE.md 五 |
 
----
+***
 
 ## M0 · 地基加固(P0,阻塞后续所有视觉开发)
 
-| 任务 | 产物 | 说明 |
-|------|------|------|
-| **设计令牌迁移**(P0) | `tailwind.config.mjs` | `theme.extend.colors` = 深空蓝/电弧金/磁石灰/正电红/负电蓝 + 派生 bg/panel/panel-2/line/text/text-dim;`fontFamily.sans/math`。让 `bg-bg`/`text-arc-gold` 等生效 |
-| 构建 + 视觉验证 | — | `npm run build`/`dev`,截图首页与时间线确认配色/布局/交互正常 |
-| 字体 self-host | `public/fonts/` + `@font-face` | Inter woff2(SIL OFL,附 LICENSE),无外网依赖 |
-| KaTeX 预接入 | `src/components/shared/Formula.tsx` | 构建时渲染公式组件,供 M2 麦克斯韦方程组 |
-| 部署流水线 | `.github/workflows/deploy.yml` | GitHub Actions 构建并发布到 Pages,注入 `BASE_PATH`/`SITE_URL` |
-| 清理 | 删 `prototypes/timeline/` | 时间线已落地,按 NOTES.md 移除原型 |
+| 任务             | 产物                                  | 说明                                                                                                                                        |
+| -------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **设计令牌迁移**(P0) | `tailwind.config.mjs`               | `theme.extend.colors` = 深空蓝/电弧金/磁石灰/正电红/负电蓝 + 派生 bg/panel/panel-2/line/text/text-dim;`fontFamily.sans/math`。让 `bg-bg`/`text-arc-gold` 等生效 |
+| 构建 + 视觉验证      | —                                   | `npm run build`/`dev`,截图首页与时间线确认配色/布局/交互正常                                                                                                |
+| 字体 self-host   | `public/fonts/` + `@font-face`      | Inter woff2(SIL OFL,附 LICENSE),无外网依赖                                                                                                      |
+| KaTeX 预接入      | `src/components/shared/Formula.tsx` | 构建时渲染公式组件,供 M2 麦克斯韦方程组                                                                                                                    |
+| 部署流水线          | `.github/workflows/deploy.yml`      | GitHub Actions 构建并发布到 Pages,注入 `BASE_PATH`/`SITE_URL`                                                                                     |
+| 清理             | 删 `prototypes/timeline/`            | 时间线已落地,按 NOTES.md 移除原型                                                                                                                    |
 
 **完成判据**:首页与时间线在浏览器中配色/字体/交互完全正常;CI 能产出可访问的 Pages 站点。
 
----
+***
 
 ## M1 · 时间线深化(灵魂板块补完)— design.md 2.2 / 2.3
 
@@ -87,7 +87,7 @@
 - i18n 框架预留(多语言扩展位)
 - 跨浏览器 / 移动端测试 → 正式部署
 
----
+***
 
 ## 推荐执行顺序与理由
 
@@ -112,4 +112,8 @@ M7 打磨上线 ── 收尾
 - [x] CSS 自定义属性同步(`--color-*` → `global.css`,与 Tailwind 令牌一致)
 - [x] 删除 `prototypes/timeline/`
 - [ ] GitHub Actions 部署 + 确认仓库名→`BASE_PATH`
-- [ ] `src/content/` 集合化(板块内容增多后,从 `src/data` 迁到 Astro Content Collections,获得类型校验与 Markdown 支持)
+- [x] `src/content/` 集合化(板块内容增多后,从 `src/data` 迁到 Astro Content Collections,获得类型校验与 Markdown 支持)
+  - 已迁移:theories(7) / scientists(4) / engineering(2) → `src/content/*.json`
+  - 保留:timeline / errors / lessons / resources / unification / disable / home / quiz / analogies(非 entry 型数据)
+  - 新增 `src/lib/data.ts`(getTheory/getScientist/getEngineeringCase + getAll* 查询辅助)
+

@@ -1,16 +1,18 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SiteNav from '../../components/nav/SiteNav.astro';
-import { SCIENTISTS } from '../../data/scientists';
-import { getTheory } from '../../data/theories';
+import { getCollection } from 'astro:content';
+import { getTheory } from '../../lib/data';
 import { href } from '../../lib/href';
 import { articleSchema, breadcrumbSchema } from '../../lib/schema';
 
-export function getStaticPaths() {
-  return SCIENTISTS.map((s) => ({ params: { slug: s.slug }, props: { scientist: s } }));
+export async function getStaticPaths() {
+  const scientists = await getCollection('scientists');
+  return scientists.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
 }
-const { scientist } = Astro.props;
-const theory = scientist.theorySlug ? getTheory(scientist.theorySlug) : undefined;
+const { entry } = Astro.props;
+const scientist = entry.data;
+const theory = scientist.theorySlug ? await getTheory(scientist.theorySlug) : null;
 
 // 6 段:前 5 段 + 名言(design.md 5.2)
 const SECTIONS = [
@@ -98,8 +100,8 @@ const jsonLd = [
     {
       theory && (
         <nav class="mt-10 border-t border-line pt-6 text-sm">
-          <a href={href(`theory/${theory.slug}`)} class="text-arc-gold hover:underline">
-            相关理论:{theory.name} →
+          <a href={href(`theory/${theory.id}`)} class="text-arc-gold hover:underline">
+            相关理论:{theory.data.name} →
           </a>
         </nav>
       )

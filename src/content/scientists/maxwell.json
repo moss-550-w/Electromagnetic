@@ -1,0 +1,19 @@
+{
+  "name": "詹姆斯·麦克斯韦",
+  "life": "1831 – 1879",
+  "role": "预言电磁波,却没能看到它的人",
+  "accent": "#A78BFA",
+  "summary": "用流体类比想象电磁场,生前理论几乎无人问津,48 岁便早逝。",
+  "sections": {
+    "portrait": "苏格兰乡绅之子,内向、虔诚而幽默,兴趣广得惊人——色觉、土星环、气体分子运动都研究。生活低调,晚年在剑桥一手筹建了卡文迪许实验室。",
+    "journey": "他借助机械与流体力学模型来类比电磁场,一步步建立起方程组。1865 年发表时,理论过于超前,生前几乎无人能理解、更谈不上接受。1879 年他因胃癌去世,年仅 48 岁,没能等到 1887 年赫兹的验证。",
+    "contribution": "麦克斯韦方程组、电磁波的预言、气体分子运动论(麦克斯韦速度分布)、色彩理论(拍出第一张彩色照片)、以及土星环稳定性的证明。",
+    "controversy": "方程组与位移电流在当时被认为抽象、缺乏实验支撑;场论本身也未被广泛接受。他的工作,生前影响相当有限。",
+    "legacy": "伟大的理论往往超越它所处的时代;即便明知自己可能看不到成果,也值得坚持做下去。"
+  },
+  "quote": {
+    "zh": "我们几乎无法回避这个推论:光,就是引起电与磁现象的同一介质的横向波动。",
+    "en": "We can scarcely avoid the inference that light consists in the transverse undulations of the same medium which is the cause of electric and magnetic phenomena."
+  },
+  "theorySlug": "maxwell-equations"
+}
