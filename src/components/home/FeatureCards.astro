@@ -1,0 +1,34 @@
+---
+import { href } from '../../lib/href';
+import { FEATURES } from '../../data/home';
+---
+
+<section class="mx-auto max-w-6xl px-5 py-14" aria-label="特色板块">
+  <div class="grid gap-5 md:grid-cols-3">
+    {
+      FEATURES.map((f) =>
+        f.upcoming || !f.to ? (
+          <article
+            aria-disabled="true"
+            class="relative rounded-2xl border border-line bg-panel/50 p-6"
+          >
+            <span class="absolute right-4 top-4 rounded-full bg-panel-2 px-2 py-0.5 text-[11px] text-text-dim">
+              即将上线
+            </span>
+            <h2 class="text-xl font-bold text-text">{f.title}</h2>
+            <p class="mt-2 text-sm leading-relaxed text-text-dim">{f.desc}</p>
+          </article>
+        ) : (
+          <a
+            href={href(f.to)}
+            class="group rounded-2xl border border-line bg-panel p-6 transition hover:border-arc-gold/60 hover:bg-panel-2"
+          >
+            <h2 class="text-xl font-bold text-text group-hover:text-arc-gold">{f.title}</h2>
+            <p class="mt-2 text-sm leading-relaxed text-text-dim">{f.desc}</p>
+            <span class="mt-4 inline-block text-sm font-semibold text-arc-gold">了解更多 →</span>
+          </a>
+        ),
+      )
+    }
+  </div>
+</section>

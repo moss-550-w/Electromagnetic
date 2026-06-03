@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import IntroAnimation from '../components/home/IntroAnimation.astro';
+import SiteNav from '../components/nav/SiteNav.astro';
+import TimelineThumb from '../components/home/TimelineThumb.astro';
+import FeatureCards from '../components/home/FeatureCards.astro';
+import InsightTicker from '../components/home/InsightTicker.astro';
+import { href } from '../lib/href';
+---
+
+<BaseLayout
+  title="电磁学:一场跨越三千年的认知革命"
+  description="从琥珀摩擦到 5G 通信。以科学史的曲折性为灵魂,呈现电磁学发现背后的争议、错误与偶然——普通用户看故事,爱好者看细节,专业用户看原始文献。"
+>
+  <IntroAnimation />
+  <SiteNav />
+  <main id="main">
+    <TimelineThumb />
+    <FeatureCards />
+    <InsightTicker />
+  </main>
+  <footer class="border-t border-line py-8 text-center text-xs text-text-dim">
+    <p>
+      内容基于真实科学史 · 不美化历史、不神化科学家 ·
+      <a href={href('timeline')} class="text-arc-gold">进入交互式时间线</a>
+    </p>
+  </footer>
+</BaseLayout>

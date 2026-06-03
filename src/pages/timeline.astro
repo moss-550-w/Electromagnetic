@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteNav from '../components/nav/SiteNav.astro';
+import TimelineApp from '../components/timeline/TimelineApp.tsx';
+import { ERAS } from '../data/timeline';
+---
+
+<BaseLayout
+  title="交互式电磁学发展时间线 · 三千年认知革命"
+  description="5 个时代、16 个真实史实节点。垂直沉浸式叙事 + 详情常驻面板。每个节点呈现快速结论、完整经过与科学启示,并以红色标注最颠覆认知的历史真相。"
+>
+  <SiteNav />
+  <main id="main">
+    <h1 class="sr-only">交互式电磁学发展时间线</h1>
+    <!-- 交互岛屿:进入视口才水合,数据构建时注入,纯静态 -->
+    <TimelineApp eras={ERAS} client:visible />
+  </main>
+</BaseLayout>

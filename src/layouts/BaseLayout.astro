@@ -1,0 +1,27 @@
+---
+import '../styles/global.css';
+import Seo from '../components/seo/Seo.astro';
+import { asset } from '../lib/href';
+
+interface Props {
+  title: string;
+  description: string;
+  lang?: string;
+}
+const { title, description, lang = 'zh-CN' } = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href={asset('favicon.svg')} />
+    <Seo title={title} description={description} />
+    <slot name="head" />
+  </head>
+  <body class="bg-bg text-text font-sans antialiased">
+    <a href="#main" class="skip-link">跳到主内容</a>
+    <slot />
+  </body>
+</html>

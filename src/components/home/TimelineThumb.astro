@@ -1,0 +1,55 @@
+---
+import { href } from '../../lib/href';
+import { ERAS } from '../../data/timeline';
+
+const SEG = 200; // 每个时代段宽
+---
+
+<section class="mx-auto max-w-6xl px-5 pb-16 pt-28 text-center md:pt-36">
+  <h1 class="mx-auto max-w-3xl text-3xl font-extrabold leading-tight md:text-5xl">
+    从琥珀摩擦到 5G 通信
+  </h1>
+  <p class="mx-auto mt-4 max-w-2xl text-base text-text-dim md:text-lg">
+    一场跨越三千年的认知革命。每一个理所当然的公式背后,都是百年的
+    <span class="text-arc-gold">争论、错误与偶然</span>。
+  </p>
+
+  <!-- 中央时间线缩略图入口:整体 <a>,键盘可达,无 JS 也能跳转 -->
+  <a
+    href={href('timeline')}
+    class="group mt-10 block rounded-2xl border border-line bg-panel/60 p-5 transition hover:border-arc-gold/60 hover:bg-panel"
+    aria-label="进入交互式电磁学发展时间线"
+  >
+    <svg viewBox="0 0 1000 130" class="w-full" role="img" aria-label="电磁学发展五个时代缩略时间线">
+      {
+        ERAS.map((era, i) => {
+          const x0 = i * SEG;
+          const len = era.nodes.length;
+          return (
+            <g>
+              <line x1={x0 + 6} y1={74} x2={x0 + SEG - 6} y2={74} stroke={era.accent} stroke-width="4" stroke-linecap="round" />
+              <text x={x0 + SEG / 2} y={40} text-anchor="middle" fill="#94A3B8" font-size="13">{era.name}</text>
+              <text x={x0 + SEG / 2} y={104} text-anchor="middle" fill="#475569" font-size="10">{era.range}</text>
+              {era.nodes.map((n, j) => {
+                const cx = x0 + ((j + 1) / (len + 1)) * SEG;
+                return (
+                  <circle
+                    cx={cx}
+                    cy={74}
+                    r={n.key ? 7 : 4.5}
+                    fill={n.key ? '#F59E0B' : '#16223f'}
+                    stroke={n.key ? '#fff' : era.accent}
+                    stroke-width="2"
+                  />
+                );
+              })}
+            </g>
+          );
+        })
+      }
+    </svg>
+    <span class="mt-3 inline-block text-sm font-semibold text-arc-gold">
+      进入交互式时间线 · 5 个时代 16 个关键节点 →
+    </span>
+  </a>
+</section>

@@ -1,0 +1,35 @@
+---
+import { INSIGHTS } from '../../data/home';
+
+// 复制一份实现无缝循环(translateX -50% 刚好滚过一份)
+const loop = [...INSIGHTS, ...INSIGHTS];
+---
+
+<section class="ticker-wrap border-y border-line bg-panel/40 py-4" aria-label="科学启示">
+  <div class="ticker flex w-max gap-12 px-6">
+    {
+      loop.map((s, i) => (
+        <span class="whitespace-nowrap text-sm text-text-dim" aria-hidden={i >= INSIGHTS.length ? 'true' : undefined}>
+          <span class="text-arc-gold">「</span>{s}<span class="text-arc-gold">」</span>
+        </span>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .ticker {
+    animation: ticker-scroll 34s linear infinite;
+  }
+  .ticker-wrap:hover .ticker {
+    animation-play-state: paused;
+  }
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ticker { animation: none; }
+    .ticker-wrap { overflow-x: auto; }
+  }
+</style>

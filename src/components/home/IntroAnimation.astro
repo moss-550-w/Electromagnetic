@@ -1,0 +1,109 @@
+---
+// 开场动画:3 秒可跳过,覆盖层不阻塞首屏(下方内容已渲染),尊重 prefers-reduced-motion。
+---
+
+<div id="intro" role="dialog" aria-label="开场" aria-live="off">
+  <button id="intro-skip" type="button">跳过 →</button>
+
+  <svg id="intro-spark" viewBox="0 0 200 200" aria-hidden="true">
+    <circle class="core" cx="100" cy="100" r="4" fill="#F59E0B" />
+    <g fill="none" stroke="#F59E0B" stroke-width="1.4" stroke-linecap="round" opacity="0.85">
+      <path class="field" d="M100 100 C 60 70, 40 120, 12 100" />
+      <path class="field" d="M100 100 C 140 70, 160 120, 188 100" />
+      <path class="field" d="M100 100 C 70 60, 120 40, 100 12" />
+      <path class="field" d="M100 100 C 130 140, 80 160, 100 188" />
+    </g>
+  </svg>
+
+  <h2 class="intro-title">电磁学:一场跨越三千年的认知革命</h2>
+  <p class="intro-sub">每一个理所当然的公式背后,都是百年的争论与试错</p>
+</div>
+
+<script>
+  const intro = document.getElementById('intro');
+  const finish = () => intro?.classList.add('intro-done');
+
+  if (sessionStorage.getItem('intro-seen')) {
+    intro?.remove(); // 同会话二次访问直接跳过
+  } else {
+    sessionStorage.setItem('intro-seen', '1');
+    document.getElementById('intro-skip')?.addEventListener('click', finish);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.setTimeout(finish, reduced ? 900 : 3200);
+  }
+</script>
+
+<style>
+  #intro {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: #05060d;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+  }
+  #intro.intro-done {
+    opacity: 0;
+    pointer-events: none;
+  }
+  #intro-skip {
+    position: absolute;
+    top: 20px;
+    right: 22px;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    color: var(--color-text-dim);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  #intro-skip:hover {
+    color: var(--color-text);
+    border-color: var(--color-magnet-gray);
+  }
+  #intro-spark {
+    width: 200px;
+    height: 200px;
+  }
+  .core {
+    animation: pulse 1.6s ease-in-out infinite;
+    transform-origin: center;
+  }
+  .field {
+    stroke-dasharray: 240;
+    stroke-dashoffset: 240;
+    animation: draw 1.8s ease-out forwards;
+  }
+  .field:nth-child(3) { animation-delay: 0.15s; }
+  .field:nth-child(4) { animation-delay: 0.3s; }
+  .intro-title {
+    color: var(--color-text);
+    font-size: clamp(20px, 4vw, 34px);
+    font-weight: 800;
+    text-align: center;
+    padding: 0 16px;
+    opacity: 0;
+    animation: fade-up 0.9s ease 0.8s forwards;
+  }
+  .intro-sub {
+    color: var(--color-arc-gold);
+    font-size: 14px;
+    opacity: 0;
+    animation: fade-up 0.9s ease 1.2s forwards;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes pulse { 0%, 100% { r: 4; opacity: 1; } 50% { r: 8; opacity: 0.6; } }
+  @keyframes fade-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .field { stroke-dashoffset: 0; animation: none; }
+    .core { animation: none; }
+    .intro-title, .intro-sub { opacity: 1; animation: none; }
+  }
+</style>
